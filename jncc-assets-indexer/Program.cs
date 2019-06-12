@@ -23,9 +23,9 @@ namespace assetIndexer
         {
             // Read in command line parameters
 
-            var config = GetConfiguration();
+            var assetListUrls = GetUrls();
 
-            ProcessAssetLists(config.AssetListUrls);
+            ProcessAssetLists(assetListUrls);
         }
 
         static void ProcessAssetLists(IEnumerable<string> assetListUrls)
@@ -177,11 +177,11 @@ namespace assetIndexer
             return uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length) + fileName;
         }
 
-        static Configuration GetConfiguration()
+        static List<string> GetUrls()
         {
             using (StreamReader fileReader = new StreamReader("configuration.json"))
             {
-                return JsonConvert.DeserializeObject<Configuration>(fileReader.ReadToEnd());
+                return JsonConvert.DeserializeObject<List<string>>(fileReader.ReadToEnd());
             }
         }
     }
