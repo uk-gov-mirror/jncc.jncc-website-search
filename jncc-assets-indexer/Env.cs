@@ -16,8 +16,8 @@ namespace assetIndexer
         public string SqsPayloadBucket   { get; private set; }
         public string EsIndex            { get; private set; }
         public string EsSite             { get; private set; }
-        public bool UseLocalstack        { get; private set; }
-        public int AssetQueryDelay       { get; private set; }
+        public bool UseLocalstack        { get; private set; } = false; 
+        public int AssetQueryDelay       { get; private set; } = 0;
 
         public Env()
         {
