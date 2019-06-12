@@ -118,7 +118,7 @@ namespace assetIndexer
             else
             {
                 return new AmazonSQSClient(
-                    new BasicAWSCredentials(Env.Var.AwsAccessKey, Env.Var.AwsSecretAccessKey), 
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
         }
@@ -135,7 +135,7 @@ namespace assetIndexer
             else 
             {
                 return new AmazonS3Client(
-                    new BasicAWSCredentials(Env.Var.AwsAccessKey, Env.Var.AwsSecretAccessKey), 
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
         }

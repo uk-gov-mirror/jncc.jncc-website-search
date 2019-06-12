@@ -9,7 +9,7 @@ namespace assetIndexer
         private static readonly Env env = new Env();
 
         public string AwsRegion          { get; private set; }
-        public string AwsAccessKey       { get; private set; }
+        public string AwsAccessKeyId     { get; private set; }
         public string AwsSecretAccessKey { get; private set; }
         // public string HUB_API_ENDPOINT { get; private set; }   
         public string SqsEndpoint        { get; private set; }
@@ -24,8 +24,8 @@ namespace assetIndexer
             DotEnv.Config();
 
             AwsRegion = GetVariable("AWS_REGION");
-            AwsAccessKey = GetVariable("AWS_ACCESSKEY");
-            AwsSecretAccessKey = GetVariable("AWS_SECRETACCESSKEY");
+            AwsAccessKeyId = GetVariable("AWS_ACCESS_KEY_ID");
+            AwsSecretAccessKey = GetVariable("AWS_SECRET_ACCESS_KEY");
             // this.HUB_API_ENDPOINT = GetVariable("HUB_API_ENDPOINT");
             SqsEndpoint= GetVariable("SQS_ENDPOINT");
             SqsPayloadBucket = GetVariable("SQS_PAYLOAD_BUCKET"); 
