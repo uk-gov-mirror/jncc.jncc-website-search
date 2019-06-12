@@ -30,6 +30,8 @@ namespace assetIndexer
 
         static void ProcessAssetLists(IEnumerable<string> assetListUrls)
         {
+            Console.WriteLine("sqs endpoint: {0}", Env.Var.SqsEndpoint);
+
             using(var s3 = GetS3Client())
             using(var sqs = GetSQSClient())
             using(var sqsExtendedClient = new AmazonSQSExtendedClient(sqs,
@@ -90,7 +92,7 @@ namespace assetIndexer
                                 }
                             };
 
-                            Console.WriteLine("SQS Endpoint: {0}", Env.Var.SqsEndpoint);
+                            
                             var response = sqsExtendedClient.SendMessageAsync(Env.Var.SqsEndpoint,
                                 JsonConvert.SerializeObject(message, Formatting.None)
                             ).GetAwaiter().GetResult();
