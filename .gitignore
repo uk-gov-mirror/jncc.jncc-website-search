@@ -1,5 +1,2 @@
 XDG_CACHE_HOME
-.localstack/
-bin/
-obj/
-.env
+

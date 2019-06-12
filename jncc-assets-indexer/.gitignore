@@ -27,3 +27,8 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+# Project specific
+.localstack/
+.env
+configuration.json
