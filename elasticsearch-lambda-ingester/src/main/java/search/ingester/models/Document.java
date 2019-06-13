@@ -21,7 +21,7 @@ public class Document {
     private String id;
 
     @NotBlank
-    @Pattern(regexp = "datahub|website|mhc|sac", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Site must be datahub|website|mhc|sac")
+    @Pattern(regexp = "datahub|website|website-asset|mhc|sac", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Site must be datahub|website|website-asset|mhc|sac")
     @JsonbProperty("site")
     private String site;
 
