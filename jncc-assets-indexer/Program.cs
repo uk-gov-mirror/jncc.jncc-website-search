@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Net;
 using CsvHelper;
 using System.Threading;
+using System.Globalization;
 
 namespace assetIndexer
 {
@@ -75,6 +76,9 @@ namespace assetIndexer
                                 continue;
                             }
                             
+                            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+                            var style = DateTimeStyles.None;
+
                             var message = new
                             {
                                 verb = "upsert",
@@ -85,7 +89,7 @@ namespace assetIndexer
                                     site = Env.Var.EsSite,
                                     title = asset.Title,
                                     url = file.Url,
-                                    published_date = asset.PublicationDate,
+                                    published_date = DateTime.Parse(asset.PublicationDate, culture, style).ToString("yyyy-MM-dd'T'HH':'mm':'ss"),
                                     file_base64 = file.EncodedFile, // base-64 encoded file
                                     file_extension = file.Extension,   // when this is a downloadable
                                     file_bytes = file.Bytes.ToString(),   // file such as a PDF, etc.

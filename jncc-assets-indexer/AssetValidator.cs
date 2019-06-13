@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace assetIndexer
 {
@@ -33,7 +34,11 @@ namespace assetIndexer
         private static bool ValidatePublishedDate(Asset asset)
         {
             DateTime val;
-            if (DateTime.TryParse(asset.PublicationDate, out val))
+        
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            var style = DateTimeStyles.None;
+
+            if (DateTime.TryParse(asset.PublicationDate, culture, style, out val))
             {
                 return true;
             }
