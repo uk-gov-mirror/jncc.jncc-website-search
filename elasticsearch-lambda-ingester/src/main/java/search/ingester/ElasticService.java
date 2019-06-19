@@ -25,9 +25,37 @@ import search.ingester.models.Document;
 public class ElasticService {
 
     private Env env;
+    private static RestHighLevelClient esClient;
+
 
     public ElasticService(Env env) {
         this.env = env;
+    }
+
+    /**
+     * Create configured a High Level Elasticsearch REST client with an AWS http interceptor to sign the data package
+     * being sent
+     *
+     * @return A Configured High Level Elasticsearch REST client to send packets to an AWS ES service
+     */
+    private static RestHighLevelClient getEsClient(Env env) {
+        RestHighLevelClient client = ElasticService.esClient;
+
+        if (client == null) {
+            String awsServiceName = "es";
+            AWS4Signer signer = new AWS4Signer();
+            signer.setServiceName(awsServiceName);
+            signer.setRegionName(env.AWS_REGION());
+            HttpRequestInterceptor interceptor =
+                    new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new DefaultAWSCredentialsProviderChain());
+            client = new RestHighLevelClient(
+                    RestClient.builder(HttpHost.create(env.ES_ENDPOINT()))
+                            .setHttpClientConfigCallback(callback -> callback.addInterceptorLast(interceptor)));
+
+            ElasticService.esClient = client;
+        }
+
+        return client;
     }
 
     public void putDocument(String index, Document doc) throws IOException {
@@ -37,13 +65,7 @@ public class ElasticService {
         Jsonb jsonb = JsonbBuilder.create();
         req.source(jsonb.toJson(doc), XContentType.JSON);
 
-        // pm: why is this an env var? surely this is fixed now?
-        // If a pipeline is specified, use it
-        if (System.getenv(env.ES_PIPELINE()) != null) {
-            req.setPipeline(env.ES_PIPELINE());
-        }
-
-        IndexResponse resp = esClient().index(req, RequestOptions.DEFAULT);
+        IndexResponse resp = ElasticService.getEsClient(env).index(req, RequestOptions.DEFAULT);
 
         if (!(resp.getResult() == DocWriteResponse.Result.CREATED
                 || resp.getResult() == DocWriteResponse.Result.UPDATED)) {
@@ -53,43 +75,30 @@ public class ElasticService {
         }
     }
 
-    void deleteDocument(String index, String docId) throws IOException {
+    public void deleteDocument(String index, String docId) throws IOException {
 
         DeleteRequest request = new DeleteRequest(index, env.ES_DOCTYPE(), docId);
-        DeleteResponse response = esClient().delete(request, RequestOptions.DEFAULT);
+        DeleteResponse response = ElasticService.getEsClient(env).delete(request, RequestOptions.DEFAULT);
 
         if (response.getResult() != DocWriteResponse.Result.DELETED) {
-            throw new RuntimeException(
-                    String.format("Index Response not as expected. Got (%d) with the following " +
-                            "returned %s", response.status().getStatus(), response.toString()));
+            // we only have one queue for all environments, so avoid filling it with 404s which
+            // can happen more easily in non-live environments
+            boolean nonLive404 = !index.startsWith("live") && response.status().getStatus() == 404;
+            if (!nonLive404) {
+                throw new RuntimeException(
+                        String.format("Index Response not as expected. Got (%d) with the following " +
+                                "returned %s", response.status().getStatus(), response.toString()));
+            }
         }
     }    
 
-    void deleteByParentId(String index, String parentDocId) throws IOException {
+    public void deleteByParentId(String index, String parentDocId) throws IOException {
 
         DeleteByQueryRequest req = new DeleteByQueryRequest(index);
         req.setQuery(QueryBuilders.matchQuery("parent_id", parentDocId));
 
-        BulkByScrollResponse res = esClient().deleteByQuery(req, RequestOptions.DEFAULT);
-        
-        System.out.println("::Deleted " + res.getStatus().getTotal() + " resources.::"); 
-    }
+        BulkByScrollResponse res = ElasticService.getEsClient(env).deleteByQuery(req, RequestOptions.DEFAULT);
 
-    /**
-     * Create configured a High Level Elasticsearch REST client with an AWS http interceptor to sign the data package
-     * being sent
-     *
-     * @return A Configured High Level Elasticsearch REST client to send packets to an AWS ES service
-     */
-    private RestHighLevelClient esClient() {
-        String awsServiceName = "es";
-        AWS4Signer signer = new AWS4Signer();
-        signer.setServiceName(awsServiceName);
-        signer.setRegionName(env.AWS_REGION());
-        HttpRequestInterceptor interceptor =
-                new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new DefaultAWSCredentialsProviderChain());
-        return new RestHighLevelClient(
-                RestClient.builder(HttpHost.create(env.ES_ENDPOINT()))
-                        .setHttpClientConfigCallback(callback -> callback.addInterceptorLast(interceptor)));
+        // TODO: Need to check the response of this
     }
 }
