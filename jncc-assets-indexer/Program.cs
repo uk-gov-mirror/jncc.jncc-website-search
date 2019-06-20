@@ -111,7 +111,7 @@ namespace assetIndexer
 
                             if (Env.Var.AssetQueryDelay > 0)
                             {
-                                Console.WriteLine("Waiting {0}ms before getting next asset");
+                                Console.WriteLine("Waiting {0}ms before getting next asset", Env.Var.AssetQueryDelay);
                                 Thread.Sleep(Env.Var.AssetQueryDelay);
                             }
                         }
@@ -122,7 +122,7 @@ namespace assetIndexer
             if (errors > 0)
             {
                 // Throw an error if there have been any non breaking issues so the jenkins job fails
-                throw new Exception(String.Format("{0} errors occured during processing", errors.ToString()));
+                throw new Exception(String.Format("{0} errors occured during processing", errors));
             }
         }
 
