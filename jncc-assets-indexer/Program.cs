@@ -22,14 +22,10 @@ namespace assetIndexer
     {
         public static void Main(string[] args)
         {
-            // Read in command line parameters
-
-            var assetListUrls = GetUrls();
-
-            ProcessAssetLists(assetListUrls);
+            ProcessAssetLists();
         }
 
-        static void ProcessAssetLists(IEnumerable<string> assetListUrls)
+        static void ProcessAssetLists()
         {
             Console.WriteLine("sqs endpoint: {0}", Env.Var.SqsEndpoint);
             Console.WriteLine("sqs s3 bucket", Env.Var.SqsPayloadBucket);
@@ -42,7 +38,7 @@ namespace assetIndexer
                 new ExtendedClientConfiguration().WithLargePayloadSupportEnabled(s3, Env.Var.SqsPayloadBucket)
             ))
             {
-                foreach (var assetListUrl in assetListUrls)
+                foreach (var assetListUrl in Env.Var.AssetListUrls)
                 {
                     Console.WriteLine("Processing {0}", assetListUrl);
 
@@ -194,14 +190,6 @@ namespace assetIndexer
         {
             var uri = new Uri(url);
             return uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length) + fileName;
-        }
-
-        static List<string> GetUrls()
-        {
-            using (StreamReader fileReader = new StreamReader("configuration.json"))
-            {
-                return JsonConvert.DeserializeObject<List<string>>(fileReader.ReadToEnd());
-            }
         }
     }
 }

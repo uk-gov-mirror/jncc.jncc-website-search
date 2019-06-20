@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using dotenv.net;
+using Newtonsoft.Json;
 
 namespace assetIndexer
 {
@@ -8,16 +10,17 @@ namespace assetIndexer
         static Env() { } // singleton to avoid reading a variable more than once
         private static readonly Env env = new Env();
 
-        public string AwsRegion          { get; private set; }
-        public string AwsAccessKeyId     { get; private set; }
-        public string AwsSecretAccessKey { get; private set; }
+        public string AwsRegion           { get; private set; }
+        public string AwsAccessKeyId      { get; private set; }
+        public string AwsSecretAccessKey  { get; private set; }
         // public string HUB_API_ENDPOINT { get; private set; }   
-        public string SqsEndpoint        { get; private set; }
-        public string SqsPayloadBucket   { get; private set; }
-        public string EsIndex            { get; private set; }
-        public string EsSite             { get; private set; }
-        public bool UseLocalstack        { get; private set; } = false; 
-        public int AssetQueryDelay       { get; private set; } = 0;
+        public string SqsEndpoint         { get; private set; }
+        public string SqsPayloadBucket    { get; private set; }
+        public string EsIndex             { get; private set; }
+        public string EsSite              { get; private set; }
+        public List<string> AssetListUrls { get; private set; }
+        public bool UseLocalstack         { get; private set; } = false; 
+        public int AssetQueryDelay        { get; private set; } = 0;
 
         public Env()
         {
@@ -33,6 +36,7 @@ namespace assetIndexer
             EsIndex = GetVariable("ES_INDEX");
             UseLocalstack = Boolean.Parse(GetVariable("USE_LOCALSTACK"));
             AssetQueryDelay = Int32.Parse(GetVariable("ASSET_QUERY_DELAY"));
+            AssetListUrls = JsonConvert.DeserializeObject<List<string>>(GetVariable("ASSET_LIST_URLS"));
         }
 
         string GetVariable(string variable)
