@@ -100,6 +100,7 @@ namespace assetIndexer
                                 }
                             };
 
+                            Console.WriteLine("calling sqs endpoint: {0}", Env.Var.SqsEndpoint);
                             
                             var response = sqsExtendedClient.SendMessageAsync(Env.Var.SqsEndpoint,
                                 JsonConvert.SerializeObject(message, Formatting.None)
