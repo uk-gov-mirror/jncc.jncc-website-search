@@ -1,5 +1,9 @@
 # Local development
 
+## Install sam local
+
+   npm install -g aws-sam-local
+
 ## Run test data server
 
 Edit /test/local-file-server.py and set web_dir to poin to the location of the test files.
@@ -57,11 +61,11 @@ Gives
 
 list queues
 
-   aws --endpoint-url=http://localhost:4576 sqs list-queues
+    aws --endpoint-url=http://localhost:4576 sqs list-queues
 
 Get arn
 
-   aws --endpoint-url=http://localhost:4576 sqs get-queue-attributes --queue-url http://localhost:4576/queue/test-search-queue --attribute-names QueueArn
+    aws --endpoint-url=http://localhost:4576 sqs get-queue-attributes --queue-url http://localhost:4576/queue/test-search-queue --attribute-names QueueArn
 
 Gives:
 {
@@ -72,17 +76,27 @@ Gives:
 
 Get message from queue
 
-   aws --endpoint-url=http://localhost:4576 sqs receive-message --queue-url "http://localhost:4576/queue/test-search-queue"
+    aws --endpoint-url=http://localhost:4576 sqs receive-message --queue-url "http://localhost:4576/queue/test-search-queue"
 
 Purge queue
 
-   aws --endpoint-url=http://localhost:4576 sqs purge-queue --queue-url "http://localhost:4576/queue/test-search-queue"
+    aws --endpoint-url=http://localhost:4576 sqs purge-queue --queue-url "http://localhost:4576/queue/test-search-queue"
 
 ## lambda
+
+bring up localstack
+
+    docker up
+
+Check network
+
+    docker inspect localstack -f “{{json .NetworkSettings.Networks }}”.
 
 package elastic lambda ingester
 
 zip jar
+
+Invoke sam local
 
    aws --endpoint=http://localhost:4574 lambda create-function --function-name jncc-website-search-ingester-java \
    --zip-file fileb://elasticsearch-lambda-ingester-0.6.0.zip --handler "search.ingester.Ingester" --runtime java8 \
