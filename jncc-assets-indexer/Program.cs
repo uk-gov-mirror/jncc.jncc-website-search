@@ -34,6 +34,8 @@ namespace assetIndexer
             Console.WriteLine("sqs endpoint: {0}", Env.Var.SqsEndpoint);
             Console.WriteLine("Bucket", Env.Var.SqsPayloadBucket);
             Console.WriteLine("Key Id {0}", String.Concat(Env.Var.AwsAccessKeyId.TakeLast(6)));
+            Console.WriteLine("Key Secret {0}", String.Concat(Env.Var.AwsSecretAccessKey.TakeLast(6)));
+            Console.WriteLine("Region {0}", Env.Var.AwsRegion);
 
             using(var s3 = GetS3Client())
             using(var sqs = GetSQSClient())
@@ -99,7 +101,7 @@ namespace assetIndexer
                             };
 
                             
-
+                            Console.WriteLine("sending message sqs endpoint: {0}", Env.Var.SqsEndpoint);
                             var response = sqsExtendedClient.SendMessageAsync(Env.Var.SqsEndpoint,
                                 JsonConvert.SerializeObject(message, Formatting.None)
                             ).GetAwaiter().GetResult();
@@ -127,6 +129,8 @@ namespace assetIndexer
             }
             else
             {
+                Console.WriteLine("Getting the right sqs client");
+
                 return new AmazonSQSClient(
                     new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
@@ -144,6 +148,8 @@ namespace assetIndexer
             }
             else 
             {
+                Console.WriteLine("Getting the right s3 client");
+
                 return new AmazonS3Client(
                     new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
