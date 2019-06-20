@@ -5,14 +5,29 @@ namespace assetIndexer
 {
     public static class AssetValidator
     {
-        public static bool IsValid(Asset asset)
+        public static bool IsValid(Asset asset, int errors)
         {
             var isValid = true;
 
-            if (! ValidateId(asset)) isValid = false;
-            if (! ValidateTitle(asset)) isValid = false;
-            if (! ValidatePublishedDate(asset)) isValid = false;
-            if (! ValidateFileName(asset)) isValid = false;
+            if (! ValidateId(asset)) {
+                isValid = false;
+                errors++;
+            }
+
+            if (! ValidateTitle(asset)) {
+                isValid = false;
+                errors++;
+            }
+
+            if (! ValidatePublishedDate(asset)) {
+                isValid = false;
+                errors++;
+            }
+
+            if (! ValidateFileName(asset)) {
+                isValid = false;
+                errors++;
+            }
 
             return isValid;
         }

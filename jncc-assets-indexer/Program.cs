@@ -32,10 +32,9 @@ namespace assetIndexer
         static void ProcessAssetLists(IEnumerable<string> assetListUrls)
         {
             Console.WriteLine("sqs endpoint: {0}", Env.Var.SqsEndpoint);
-            Console.WriteLine("Bucket", Env.Var.SqsPayloadBucket);
-            Console.WriteLine("Key Id {0}", String.Concat(Env.Var.AwsAccessKeyId.TakeLast(6)));
-            Console.WriteLine("Key Secret {0}", String.Concat(Env.Var.AwsSecretAccessKey.TakeLast(6)));
-            Console.WriteLine("Region {0}", Env.Var.AwsRegion);
+            Console.WriteLine("sqs s3 bucket", Env.Var.SqsPayloadBucket);
+
+            int errors = 0;
 
             using(var s3 = GetS3Client())
             using(var sqs = GetSQSClient())
@@ -56,6 +55,7 @@ namespace assetIndexer
                     catch (Exception e)
                     {
                         Console.WriteLine("Unable to get asset list from {0}. Error: {1}", assetListUrl, e.Message);
+                        errors++;
                         continue;
                     }
               
@@ -65,7 +65,7 @@ namespace assetIndexer
                         
                         Console.WriteLine("Processing Asset {0}, {1} {2}", i, asset.Id, asset.Title);
 
-                        if (AssetValidator.IsValid(asset))
+                        if (AssetValidator.IsValid(asset, errors))
                         {
                             var assetFileUrl = GetFileUrl(assetListUrl, asset.FileName);
                             
@@ -77,6 +77,7 @@ namespace assetIndexer
                             catch (Exception e)
                             {
                                 Console.WriteLine("Unable to get asset file from {0}. Error: {1}", assetFileUrl, e.Message);
+                                errors++;
                                 continue;
                             }
                             
@@ -116,6 +117,12 @@ namespace assetIndexer
                         }
                     }
                 };
+            }
+
+            if (errors > 0)
+            {
+                // Throw an error if there have been any non breaking issues so the jenkins job fails
+                throw new Exception(String.Format("{0} errors occured during processing", errors.ToString()));
             }
         }
 
