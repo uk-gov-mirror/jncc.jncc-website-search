@@ -38,19 +38,19 @@ namespace assetIndexer
                 new ExtendedClientConfiguration().WithLargePayloadSupportEnabled(s3, Env.Var.SqsPayloadBucket)
             ))
             {
-                foreach (var assetListUrl in Env.Var.AssetListUrls)
+                foreach (var assetList in Env.Var.AssetLists)
                 {
-                    Console.WriteLine("Processing {0}", assetListUrl);
+                    Console.WriteLine("Processing {0}", assetList.Url);
 
                     List<Asset> assets;
 
                     try
                     {
-                        assets = GetAssetList(assetListUrl);
+                        assets = GetAssetList(assetList.Url);
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Unable to get asset list from {0}. Error: {1}", assetListUrl, e.Message);
+                        Console.WriteLine("Unable to get asset list from {0}. Error: {1}", assetList.Url, e.Message);
                         errors++;
                         continue;
                     }
@@ -58,12 +58,14 @@ namespace assetIndexer
                     for (int i = 0; i < assets.Count; i++)
                     {
                         var asset = assets[i];
+
+                        var assetId = String.Format("{0}-{1}",assetList.IdPrefix, asset.Id);
                         
-                        Console.WriteLine("Processing Asset {0}, {1} {2}", i, asset.Id, asset.Title);
+                        Console.WriteLine("Processing Asset {0}, {1} {2}", i, assetId, asset.Title);
 
                         if (AssetValidator.IsValid(asset, errors))
                         {
-                            var assetFileUrl = GetFileUrl(assetListUrl, asset.FileName);
+                            var assetFileUrl = GetFileUrl(assetList.Url, asset.FileName);
                             
                             AssetFile file; 
                             try
@@ -86,7 +88,7 @@ namespace assetIndexer
                                 index = Env.Var.EsIndex,
                                 document = new
                                 {
-                                    id = asset.Id,
+                                    id = assetId,
                                     site = Env.Var.EsSite,
                                     title = asset.Title,
                                     url = file.Url,
