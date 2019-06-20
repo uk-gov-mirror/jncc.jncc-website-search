@@ -96,7 +96,8 @@ namespace assetIndexer
                                 }
                             };
 
-                            
+                            Console.WriteLine(Env.Var.AwsAccessKeyId);
+
                             var response = sqsExtendedClient.SendMessageAsync(Env.Var.SqsEndpoint,
                                 JsonConvert.SerializeObject(message, Formatting.None)
                             ).GetAwaiter().GetResult();
