@@ -121,6 +121,10 @@ namespace assetIndexer
             {
                 Console.WriteLine("{0} errors occured during processing", errors);
             }
+            else
+            {
+                Console.WriteLine("Indexing Complete, no errors");
+            }
         }
 
         static AmazonSQSClient GetSQSClient()
