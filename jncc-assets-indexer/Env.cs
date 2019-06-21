@@ -25,7 +25,7 @@ namespace assetIndexer
         {
             DotEnv.Config();
 
-            AwsRegion = GetVariable("AWS_REGION");
+            AwsRegion = GetVariable("AWS_DEFAULT_REGION");
             AwsAccessKeyId = GetVariable("AWS_ACCESS_KEY_ID");
             AwsSecretAccessKey = GetVariable("AWS_SECRET_ACCESS_KEY");
             // this.HUB_API_ENDPOINT = GetVariable("HUB_API_ENDPOINT");
