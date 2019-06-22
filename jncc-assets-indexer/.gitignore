@@ -29,7 +29,6 @@ msbuild.wrn
 .vs/
 
 # Project specific
-.localstack/
 .env*
 !env.example
 configuration.json

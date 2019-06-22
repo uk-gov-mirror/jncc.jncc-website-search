@@ -1,5 +1,8 @@
 # Local development
 
+NB Trying to start localstack with an openvpn service running will cause the following error:
+   ERROR: could not find an available, non-overlapping IPv4 address pool
+
 ## Install sam local
 
    npm install -g aws-sam-local
@@ -10,28 +13,28 @@ Edit /test/local-file-server.py and set web_dir to poin to the location of the t
    
    python.py ./test/local-file-server.py
 
-localstak
+## localstak
 
 info here: https://github.com/localstack/localstack
-Start localstack
+Start localstack in a new terminal
 
-   cd ./test
-   docker-compose up
+    cd ./test
+    x-terminal-emulator -e docker-compose up
 
 ## S3
 
 Create S3 bucket
 
-   aws --endpoint-url=http://localhost:4572  s3 mb s3://test-bucket
+    aws --endpoint-url=http://localhost:4572  s3 mb s3://test-bucket
 
 
 List bucket contents
 
-   aws --endpoint-url=http://localhost:4572 s3 ls s3://test-bucket  
+    aws --endpoint-url=http://localhost:4572 s3 ls s3://test-bucket  
 
 Delete doc id f11866b1289748758b57ae42de2d6c37 from a bucket
 
-   aws --endpoint-url=http://localhost:4572 s3 rm s3://test-bucket/f11866b1289748758b57ae42de2d6c37
+    aws --endpoint-url=http://localhost:4572 s3 rm s3://test-bucket/f11866b1289748758b57ae42de2d6c37
 
 
 
@@ -40,9 +43,9 @@ Delete doc id f11866b1289748758b57ae42de2d6c37 from a bucket
 
 Create index
 
-   curl -X PUT "http://localhost:4571/test-index"
+    curl -X PUT "http://localhost:4571/test-index"
 
-   curl -vX POST http://localhost:4571/test-index/_mapping/_doc -d @es_mapping.json --header "Content-Type: application/json"
+    curl -vX POST http://localhost:4571/test-index/_mapping/_doc -d @es_mapping.json --header "Content-Type: application/json"
 
 
 
@@ -50,7 +53,7 @@ Create index
 
 Create Queue
 
-   aws --endpoint-url=http://localhost:4576 sqs create-queue --queue-name test-search-queue
+    aws --endpoint-url=http://localhost:4576 sqs create-queue --queue-name test-search-queue
 
 Gives
 
@@ -84,19 +87,19 @@ Purge queue
 
 ## lambda
 
-bring up localstack
-
-    docker up
-
 Check network
 
-    docker inspect localstack -f “{{json .NetworkSettings.Networks }}”.
+    docker inspect localstack -f "{{json .NetworkSettings.Networks }}"
+
+Should be "localstack_default"
 
 package elastic lambda ingester
 
 zip jar
 
 Invoke sam local
+
+    x-terminal-emulator sam local invoke AwsLambdaSqsLocal log-file ./output.log -e event.json docker-network localstack_default
 
    aws --endpoint=http://localhost:4574 lambda create-function --function-name jncc-website-search-ingester-java \
    --zip-file fileb://elasticsearch-lambda-ingester-0.6.0.zip --handler "search.ingester.Ingester" --runtime java8 \
