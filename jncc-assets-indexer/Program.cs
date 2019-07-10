@@ -92,7 +92,7 @@ namespace assetIndexer
                                     site = Env.Var.EsSite,
                                     title = asset.Title,
                                     url = file.Url,
-                                    published_date = DateTime.Parse(asset.PublicationDate, culture, style).ToString("yyyy-MM-dd'T'HH':'mm':'ss"),
+                                    published_date = DateTime.Parse(asset.PublicationDate, culture, style).ToString("yyyy-MM-dd"),
                                     file_base64 = file.EncodedFile, // base-64 encoded file
                                     file_extension = file.Extension,   // when this is a downloadable
                                     file_bytes = file.Bytes.ToString(),   // file such as a PDF, etc.
