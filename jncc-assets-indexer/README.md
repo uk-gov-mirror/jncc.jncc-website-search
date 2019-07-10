@@ -99,7 +99,7 @@ zip jar
 
 Invoke sam local
 
-    x-terminal-emulator sam local invoke AwsLambdaSqsLocal log-file ./output.log -e event.json docker-network localstack_default
+    x-terminal-emulator sam local invoke AwsLambdaSqsLocal --log-file ./output.log -e event.json --docker-network localstack_default
 
    aws --endpoint=http://localhost:4574 lambda create-function --function-name jncc-website-search-ingester-java \
    --zip-file fileb://elasticsearch-lambda-ingester-0.6.0.zip --handler "search.ingester.Ingester" --runtime java8 \
