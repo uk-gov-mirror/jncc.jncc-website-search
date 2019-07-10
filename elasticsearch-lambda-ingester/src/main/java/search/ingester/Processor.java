@@ -109,6 +109,7 @@ public class Processor {
                 doc.setParentId(parent.getId());
                 doc.setParentTitle(parent.getTitle());
                 doc.setParentResourceType(parent.getResourceType());
+                doc.setPublishedDate(parent.getPublishedDate());
 
                 // grab some generic info from the parent that should just be copied to the resources
                 // i.e. keywords, published date
