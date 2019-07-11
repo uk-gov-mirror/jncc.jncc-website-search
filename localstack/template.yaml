@@ -7,7 +7,7 @@ Resources:
     Properties:
       Handler: 'search.ingester.Ingester::handleRequest'
       Runtime: java8
-      CodeUri: .
+      CodeUri: ../elasticsearch-lambda-ingester/target/elasticsearch-lambda-ingester-0.10.0.jar
       Description: ''
       MemorySize: 1024
       Timeout: 300
@@ -18,8 +18,8 @@ Resources:
           Properties:
             Queue:
               'Fn::GetAtt':
-                - SQSQueue1
-                - Arn
+                - test-search-queue
+                - arn:aws:sqs:elasticmq:000000000000:test-search-queue
             BatchSize: 1
       Environment:
         Variables:

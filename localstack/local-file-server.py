@@ -5,7 +5,7 @@ import os
 
 PORT = 2929
 
-web_dir = "/path/to/serve"
+web_dir = "/home/felix/development/testing/jncc-assets-register"
 os.chdir(web_dir)
 
 Handler = http.server.SimpleHTTPRequestHandler
