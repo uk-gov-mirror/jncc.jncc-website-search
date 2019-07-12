@@ -16,15 +16,12 @@ Resources:
         SQS1:
           Type: SQS
           Properties:
-            Queue:
-              'Fn::GetAtt':
-                - test-search-queue
-                - arn:aws:sqs:elasticmq:000000000000:test-search-queue
+            Queue: !GetAtt arn:aws:sqs:elasticmq:000000000000:test-search-queue
             BatchSize: 1
       Environment:
         Variables:
           ES_DOCTYPE: _doc
-          ES_ENDPOINT: http://localhost:4576/queue/test-search-queue
+          ES_ENDPOINT: http://localhost:4571/test-index
           ES_MAX_PAYLOAD_SIZE: '10485760'
       Tags:
         Project: jncc-website-search

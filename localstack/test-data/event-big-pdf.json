@@ -1,0 +1,20 @@
+{
+    "Records": [
+        {
+            "attributes": {
+                "ApproximateReceiveCount": "1",
+                "SentTimestamp": "1523232000000",
+                "SenderId": "123456789012",
+                "ApproximateFirstReceiveTimestamp": "1523232000001"
+            },
+            "messageAttributes": {},
+            "eventSource": "aws:sqs",
+            "eventSourceARN": "arn:aws:sqs:elasticmq:000000000000:test-search-queue",
+            "awsRegion": "us-east-1",
+            "MessageId": "3710b321-f562-4d8a-8065-737f9a99a6d5",
+            "ReceiptHandle": "3710b321-f562-4d8a-8065-737f9a99a6d5#c9d7cbab-62c4-47c1-b5f5-fff6ab3992c2",
+            "MD5OfBody": "af84e146c12b9251e8b948fc2a5036bd",
+            "Body": "{\"S3Key\":\"e841535c8b9c4ab2ad883c7c62fda760\",\"S3BucketName\":\"test-bucket\"}"
+        }
+    ]
+}

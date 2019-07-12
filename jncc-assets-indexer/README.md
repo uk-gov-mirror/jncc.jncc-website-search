@@ -23,6 +23,10 @@ Start localstack in a new terminal
 
 ## S3
 
+Delete bucket 
+
+    aws --endpoint-url=http://localhost:4572 s3 rb s3://test-bucket --force
+
 Create S3 bucket
 
     aws --endpoint-url=http://localhost:4572  s3 mb s3://test-bucket
@@ -37,15 +41,13 @@ Delete doc id f11866b1289748758b57ae42de2d6c37 from a bucket
     aws --endpoint-url=http://localhost:4572 s3 rm s3://test-bucket/f11866b1289748758b57ae42de2d6c37
 
 
-
-
 ## Elsastic search
 
 Create index
 
     curl -X PUT "http://localhost:4571/test-index"
 
-    curl -vX POST http://localhost:4571/test-index/_mapping/_doc -d @es_mapping.json --header "Content-Type: application/json"
+    curl -vX POST http://localhost:4571/test-index/_mapping/_doc -d @./localstack/es_mapping.json --header "Content-Type: application/json"
 
 
 
@@ -101,6 +103,8 @@ Invoke sam local
 
     sam local invoke jnccwebsitesearchingesterjava --log-file ./output.log -e event.json --docker-network localstack_default
 
+    sam local start-lambda --log-file ./output.log --docker-network localstack_default
+
    aws --endpoint=http://localhost:4574 lambda create-function --function-name jncc-website-search-ingester-java \
    --zip-file fileb://elasticsearch-lambda-ingester-0.6.0.zip --handler "search.ingester.Ingester" --runtime java8 \
    --environment Variables="{ES_DOCTYPE="_doc",ES_ENDPOINT="http://localhost:4571/test-index",ES_MAX_PAYLOAD_SIZE=10485760}" --role=none
@@ -108,6 +112,10 @@ Invoke sam local
 Bind function to queue.
 
    aws --endpoint=http://localhost:4574 lambda create-event-source-mapping --function-name jncc-website-search-ingester-java \
+         --event-source-arn arn:aws:sqs:elasticmq:000000000000:test-search-queue
+
+
+aws --endpoint=http://localhost:3001 lambda create-event-source-mapping --function-name jncc-website-search-ingester-java \
          --event-source-arn arn:aws:sqs:elasticmq:000000000000:test-search-queue
 
 
