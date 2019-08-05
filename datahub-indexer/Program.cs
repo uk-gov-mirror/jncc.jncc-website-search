@@ -12,22 +12,71 @@ using System.Threading;
 using Amazon.Lambda;
 using Amazon.Lambda.Model;
 using Newtonsoft.Json.Serialization;
+using CommandLine;
 
 namespace datahubIndexer
 {
     class Program
     {
-        public static void Main(string[] args)
-        {
-            ReindexDatahub();
+        public class Options {
+            [Option('a', "assetId", Required = false, HelpText = "Asset GUID to be indexed")]
+            public string AssetId { get; set; }
         }
 
-        static void ReindexDatahub()
+        public static void Main(string[] args)
         {
-            Console.WriteLine("DynamoDB table", Env.Var.DynamoDbTable);
+            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o => Run(o));
+        }
+
+        static void Run(Options opts)
+        {
+            Console.WriteLine($"DynamoDB table {Env.Var.DynamoDbTable}");
+            Console.WriteLine($"Lambda function {Env.Var.LambdaFunction}");
+
+            if (opts.AssetId != null && !string.IsNullOrWhiteSpace(opts.AssetId)) {
+                IndexAsset(opts.AssetId);
+            } else {
+                IndexAllAssets();
+            }
+        }
+
+        static void IndexAsset(string id) {
+            Console.WriteLine($"Starting indexing for asset {id}");
+
+            Asset asset;
+            try
+            {
+                asset = GetAsset(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to get asset from dynamo. Error: {0}", e.Message);
+                throw e;
+            }
+
+            foreach (var data in asset.Data) {
+                try {
+                    ProcessDataFile(data);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Unable to get base 64 encoding for resource {data.Title}. Error: {e.Message}");
+                    continue;
+                }
+            }
+
+            try {
+                SendToLambda(asset);
+            } catch (Exception e) {
+                Console.WriteLine($"Unable to invoke lambda for asset {asset.Id}. Error: {e.Message}");
+                throw e;
+            }
+        }
+
+        static void IndexAllAssets() {
+            Console.WriteLine("Starting indexing for all datahub assets");
 
             int errors = 0;
-
             List<Asset> assets;
 
             try
@@ -42,59 +91,22 @@ namespace datahubIndexer
 
             for (int i = 0; i < assets.Count; i++) {
                 var asset = assets[i];
-                Console.WriteLine($"Processing Asset {i}, {asset.Id} {asset.Metadata.Title}");
+                Console.WriteLine($"Processing asset {i}, {asset.Id} {asset.Metadata.Title}");
 
                 foreach (var data in asset.Data) {
-                    if (data.Http.FileExtension != null && data.Http.FileExtension.ToLower().Equals("pdf") && data.Http.FileBytes > 0) {
-                        var url = new Uri(data.Http.Url);
-                        
-                        try
-                        {
-                            Console.WriteLine($"Getting base 64 encoding of {url}");
-                            data.Http.FileBase64 = GetBase64Encoding(url);
-
-                            if (Env.Var.AssetQueryDelay > 0)
-                            {
-                                Console.WriteLine("Waiting {0}ms before getting next asset", Env.Var.AssetQueryDelay);
-                                Thread.Sleep(Env.Var.AssetQueryDelay);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine($"Unable to get base 64 encoding for {url}. Error: {e.Message}");
-                            errors++;
-                            continue;
-                        }
+                    try {
+                        ProcessDataFile(data);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Unable to get base 64 encoding for resource {data.Title}. Error: {e.Message}");
+                        errors++;
+                        continue;
                     }
                 }
 
                 try {
-                    var message = new {
-                        config = new {
-                            elasticsearch = new {
-                                index = Env.Var.EsIndex,
-                                site = Env.Var.EsSite
-                            },
-                            hub = new {
-                                baseUrl = Env.Var.DatahubAssetsUrl
-                            },
-                            action = "index"
-                        },
-                        asset = asset
-                    };
-
-                    var messageString = JsonConvert.SerializeObject(message, new JsonSerializerSettings{
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    });
-
-                    // Console.WriteLine($"Sending message {messageString}");
-                    var response = InvokeLambda(messageString);
-
-                    if (response != null && response.StatusCode == 200) {
-                        Console.WriteLine($"Successfully invoked lambda function for {asset.Id}");
-                    } else {
-                        throw new Exception($"Something went wrong while invoking the lambda function, got status code {response.StatusCode}");
-                    }
+                    SendToLambda(asset);
                 } catch (Exception e) {
                     Console.WriteLine($"Unable to invoke lambda for asset {asset.Id}. Error: {e.Message}");
                     errors++;
@@ -108,7 +120,51 @@ namespace datahubIndexer
             }
             else
             {
-                Console.WriteLine("Indexing Complete, no errors");
+                Console.WriteLine($"Indexing Completed for {assets.Count} assets, no errors");
+            }
+        }
+
+        static void ProcessDataFile(AssetData data) {
+             if (data.Http.FileExtension != null && data.Http.FileExtension.ToLower().Equals("pdf") && data.Http.FileBytes > 0) {
+                var url = new Uri(data.Http.Url);
+                
+                Console.WriteLine($"Getting base 64 encoding of {url}");
+                data.Http.FileBase64 = GetBase64Encoding(url);
+
+                if (Env.Var.AssetQueryDelay > 0)
+                {
+                    Console.WriteLine("Waiting {0}ms before getting next asset", Env.Var.AssetQueryDelay);
+                    Thread.Sleep(Env.Var.AssetQueryDelay);
+                }
+            }
+        }
+
+        static void SendToLambda(Asset asset) {
+            var message = new {
+                config = new {
+                    elasticsearch = new {
+                        index = Env.Var.EsIndex,
+                        site = Env.Var.EsSite
+                    },
+                    hub = new {
+                        baseUrl = Env.Var.DatahubAssetsUrl
+                    },
+                    action = "index"
+                },
+                asset = asset
+            };
+
+            var messageString = JsonConvert.SerializeObject(message, new JsonSerializerSettings{
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            // Console.WriteLine($"Sending message {messageString}");
+            var response = InvokeLambda(messageString);
+
+            if (response != null && response.StatusCode == 200) {
+                Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda for {asset.Id}");
+            } else {
+                throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, got status code {response.StatusCode}");
             }
         }
 
@@ -138,6 +194,19 @@ namespace datahubIndexer
             }
         }
 
+        static Asset GetAsset(string id)
+        {
+            Console.WriteLine($"Retrieving asset {id} from dynamo");
+
+            using (var client = GetDynamoDBClient())
+            using (var context = new DynamoDBContext(client)) {
+                var assetTable = Table.LoadTable(client, Env.Var.DynamoDbTable);
+                var result = assetTable.GetItemAsync(id).Result;
+                var asset = JsonConvert.DeserializeObject<Asset>(result.ToJson());
+                Console.WriteLine($"{asset.Id} {asset.Metadata.Title}");
+                return asset;
+            }
+        }
         static List<Asset> GetAssets()
         {
             Console.WriteLine("Getting asset list");
