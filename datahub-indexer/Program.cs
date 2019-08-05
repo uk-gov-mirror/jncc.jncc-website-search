@@ -9,6 +9,9 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.DataModel;
 using Newtonsoft.Json;
 using System.Threading;
+using Amazon.Lambda;
+using Amazon.Lambda.Model;
+using Newtonsoft.Json.Serialization;
 
 namespace datahubIndexer
 {
@@ -64,6 +67,39 @@ namespace datahubIndexer
                         }
                     }
                 }
+
+                try {
+                    var message = new {
+                        config = new {
+                            elasticsearch = new {
+                                index = Env.Var.EsIndex,
+                                site = Env.Var.EsSite
+                            },
+                            hub = new {
+                                baseUrl = Env.Var.DatahubAssetsUrl
+                            },
+                            action = "index"
+                        },
+                        asset = asset
+                    };
+
+                    var messageString = JsonConvert.SerializeObject(message, new JsonSerializerSettings{
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
+
+                    // Console.WriteLine($"Sending message {messageString}");
+                    var response = InvokeLambda(messageString);
+
+                    if (response != null && response.StatusCode == 200) {
+                        Console.WriteLine($"Successfully invoked lambda function for {asset.Id}");
+                    } else {
+                        throw new Exception($"Something went wrong while invoking the lambda function, got status code {response.StatusCode}");
+                    }
+                } catch (Exception e) {
+                    Console.WriteLine($"Unable to invoke lambda for asset {asset.Id}. Error: {e.Message}");
+                    errors++;
+                    continue;
+                }
             }
 
             if (errors > 0)
@@ -77,16 +113,29 @@ namespace datahubIndexer
         }
 
         static AmazonDynamoDBClient GetDynamoDBClient() {
-            // if (Env.Var.UseLocalstack)
-            // { 
-            //     return new AmazonDynamoDBClient(new AmazonDynamoDBConfig {
-            //         ServiceURL = "http://localhost:4569"
-            //     });
-            // } else {
+            if (Env.Var.UseLocalstack)
+            { 
+                return new AmazonDynamoDBClient(new AmazonDynamoDBConfig {
+                    ServiceURL = "http://localhost:4569"
+                });
+            } else {
                 return new AmazonDynamoDBClient(
                     new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
-            // }
+            }
+        }
+
+        static AmazonLambdaClient GetAmazonLambdaClient() {
+            if (Env.Var.UseLocalstack)
+            { 
+                return new AmazonLambdaClient(new AmazonLambdaConfig {
+                    ServiceURL = "http://localhost:4574"
+                });
+            } else {
+                return new AmazonLambdaClient(
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
+                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
+            }
         }
 
         static List<Asset> GetAssets()
@@ -121,6 +170,17 @@ namespace datahubIndexer
             }
 
             return base64Encoding;
+        }
+
+        static InvokeResponse InvokeLambda(string payload) {
+            using (var client = GetAmazonLambdaClient()) {
+                var request = new InvokeRequest() {
+                    FunctionName = Env.Var.LambdaFunction,
+                    Payload = payload
+                };
+
+                return client.InvokeAsync(request).Result;
+            }
         }
     }
 }
