@@ -27,4 +27,11 @@ In another terminal, run the indexer
 
     dotnet restore
     dotnet build
+
+To run the indexer against all assets in the db
+
     dotnet run
+
+To run the indexer against a single asset
+
+    dotnet run --assetId id-here
