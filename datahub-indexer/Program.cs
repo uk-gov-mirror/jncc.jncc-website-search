@@ -149,6 +149,9 @@ namespace datahubIndexer
                     hub = new {
                         baseUrl = Env.Var.DatahubAssetsUrl
                     },
+                    dynamo = new {
+                        table = Env.Var.DynamoDbTable
+                    },
                     action = "index"
                 },
                 asset = asset

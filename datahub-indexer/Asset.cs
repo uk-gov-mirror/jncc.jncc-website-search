@@ -9,5 +9,6 @@ namespace datahubIndexer
         public List<AssetData> Data { get; set; }
         public string DigitalObjectIdentifier { get; set; }
         public string Citation { get; set; }
+        public AssetImage Image { get; set; }
     }
 }

@@ -4,7 +4,7 @@
 
 Start localstack
 
-    cd localstack
+    cd datahub-indexer\localstack
     docker-compose up
 
 ## lambda
