@@ -26,4 +26,5 @@ Set up a table and records in http://localhost:8001
 In another terminal, run the indexer
 
     dotnet restore
+    dotnet build
     dotnet run
