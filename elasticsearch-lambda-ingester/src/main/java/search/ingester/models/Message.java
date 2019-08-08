@@ -5,7 +5,7 @@ import javax.json.bind.annotation.JsonbProperty;
 
 public class Message {
 
-    @JsonbProperty("S3Bucket")
+    @JsonbProperty("S3BucketName")
     private String s3BucketName;
 
     @JsonbProperty("S3Key")
