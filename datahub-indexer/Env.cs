@@ -11,6 +11,8 @@ namespace datahubIndexer
         public string AwsRegion              { get; private set; }
         public string AwsAccessKeyId         { get; private set; }
         public string AwsSecretAccessKey     { get; private set; }
+        public string SqsEndpoint            { get; private set; }
+        public string SqsPayloadBucket       { get; private set; }
         public string EsIndex                { get; private set; }
         public string EsSite                 { get; private set; }
         public string DynamoDbTable          { get; private set; }
@@ -26,6 +28,8 @@ namespace datahubIndexer
             AwsRegion = GetVariable("AWS_DEFAULT_REGION");
             AwsAccessKeyId = GetVariable("AWS_ACCESS_KEY_ID");
             AwsSecretAccessKey = GetVariable("AWS_SECRET_ACCESS_KEY");
+            SqsEndpoint = GetVariable("SQS_ENDPOINT");
+            SqsPayloadBucket = GetVariable("SQS_PAYLOAD_BUCKET");
             EsIndex = GetVariable("ES_INDEX");
             EsSite = GetVariable("ES_SITE");
             DynamoDbTable = GetVariable("DYNAMODB_TABLE");

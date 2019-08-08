@@ -152,6 +152,10 @@ namespace datahubIndexer
                     dynamo = new {
                         table = Env.Var.DynamoDbTable
                     },
+                    sqs = new {
+                        queueEndpoint = Env.Var.SqsEndpoint,
+                        largeMessageBucket = Env.Var.SqsPayloadBucket
+                    },
                     action = "index"
                 },
                 asset = asset
