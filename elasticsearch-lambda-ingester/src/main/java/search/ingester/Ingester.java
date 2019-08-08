@@ -45,7 +45,7 @@ public class Ingester implements RequestHandler<SQSEvent, Void> {
             try (Jsonb jsonb = JsonbBuilder.create()) {
                 // deserialize a Message from the JSON body of the SQS message
                 Message message = jsonb.fromJson(msg.getBody(), Message.class);
-                handleMessage(message, new Processor(new ElasticService(new Env()), new FileParser()));
+                handleMessage(message, new Processor(new ElasticService(new Env())));
             }
             catch (Exception ex) {
                 throw new RuntimeException(ex);
@@ -98,6 +98,9 @@ public class Ingester implements RequestHandler<SQSEvent, Void> {
         while ((line = reader.readLine()) != null){
             text = text + "\n" + line;
         }
+
+        System.out.println(":: Retrieved message from S3 ::");
+        System.out.println(text);
 
         // Return the extracted message object from the S3 JSON file
         // Automatically close `file` handler to sidestep long running lambda keeping in memory file references

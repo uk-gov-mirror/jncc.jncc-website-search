@@ -1,10 +1,7 @@
 package search.ingester;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -17,11 +14,9 @@ import search.ingester.models.Message;
 public class Processor {
 
     private ElasticService elasticService;
-    private FileParser fileParser;
 
-    public Processor(ElasticService elasticService, FileParser fileParser) {
+    public Processor(ElasticService elasticService) {
         this.elasticService = elasticService;
-        this.fileParser = fileParser;
     }
 
     public void process(Message m) throws IOException {
