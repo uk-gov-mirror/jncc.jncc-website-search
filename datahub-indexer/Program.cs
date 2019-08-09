@@ -162,10 +162,11 @@ namespace datahubIndexer
             };
 
             var messageString = JsonConvert.SerializeObject(message, new JsonSerializerSettings{
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
             });
 
-            // Console.WriteLine($"Sending message {messageString}");
+            Console.WriteLine($"Sending message {messageString}");
             var response = InvokeLambda(messageString);
 
             if (response != null && response.StatusCode == 200 && response.FunctionError == null) {
