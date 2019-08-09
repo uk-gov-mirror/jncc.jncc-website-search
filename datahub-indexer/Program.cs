@@ -156,7 +156,7 @@ namespace datahubIndexer
                         queueEndpoint = Env.Var.SqsEndpoint,
                         largeMessageBucket = Env.Var.SqsPayloadBucket
                     },
-                    action = "index"
+                    action = "reindex"
                 },
                 asset = asset
             };
@@ -168,10 +168,10 @@ namespace datahubIndexer
             // Console.WriteLine($"Sending message {messageString}");
             var response = InvokeLambda(messageString);
 
-            if (response != null && response.StatusCode == 200) {
+            if (response != null && response.StatusCode == 200 && response.FunctionError == null) {
                 Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda for {asset.Id}");
             } else {
-                throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, got status code {response.StatusCode}");
+                throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, {response.StatusCode} {response.FunctionError}");
             }
         }
 
