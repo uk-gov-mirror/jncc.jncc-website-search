@@ -116,7 +116,7 @@ namespace datahubIndexer
 
             if (errors > 0)
             {
-                Console.WriteLine("{0} errors occured during processing", errors);
+                throw new Exception($"{errors} errors occured during processing");
             }
             else
             {
