@@ -45,7 +45,7 @@ public class Ingester implements RequestHandler<SQSEvent, Void> {
             try (Jsonb jsonb = JsonbBuilder.create()) {
                 // deserialize a Message from the JSON body of the SQS message
                 Message message = jsonb.fromJson(msg.getBody(), Message.class);
-                handleMessage(message, new Processor(new ElasticService(new Env())));
+                handleMessage(message, new Processor(new ElasticService(new Env()), new FileParser()));
             }
             catch (Exception ex) {
                 throw new RuntimeException(ex);

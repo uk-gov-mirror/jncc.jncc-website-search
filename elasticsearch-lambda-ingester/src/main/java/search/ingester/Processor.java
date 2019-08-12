@@ -14,9 +14,11 @@ import search.ingester.models.Message;
 public class Processor {
 
     private ElasticService elasticService;
+    private FileParser fileParser;
 
-    public Processor(ElasticService elasticService) {
+    public Processor(ElasticService elasticService, FileParser fileParser) {
         this.elasticService = elasticService;
+        this.fileParser = fileParser;
     }
 
     public void process(Message m) throws IOException {
@@ -60,6 +62,7 @@ public class Processor {
      * @throws IOException
      */
     private void prepareDocument(Document doc) throws IOException {
+        extractContentFromFileBase64IfNecessary(doc);
         DocumentTweaker.setContentTruncatedField(doc);
         DocumentTweaker.setTimestamp(doc);
         validateDocument(doc);
@@ -76,6 +79,20 @@ public class Processor {
         elasticService.putDocument(index, doc);
     }
 
+    private void extractContentFromFileBase64IfNecessary(Document doc) {	
+        // if this doc represents a "file" (e.g. a PDF) then it will have a file_base64	
+        // field	
+        // which we need to extract into the content field etc.	
+        if (doc.getFileBase64() != null) {	
+            try {	
+                // note this function mutates its argument (and returns it for good measure!)	
+                doc = fileParser.parseFile(doc);	
+            } catch (Exception err) {	
+                throw new RuntimeException(err);	
+            }	
+        }	
+    }
+    
     private void validateDocument(Document doc) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
