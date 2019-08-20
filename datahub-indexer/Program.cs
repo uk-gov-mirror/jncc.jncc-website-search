@@ -4,6 +4,7 @@ using Amazon;
 using Amazon.Runtime;
 using System.Collections.Generic;
 using System.Net;
+using Amazon.S3;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.DataModel;
@@ -13,6 +14,7 @@ using Amazon.Lambda;
 using Amazon.Lambda.Model;
 using Newtonsoft.Json.Serialization;
 using CommandLine;
+using Amazon.S3.Model;
 
 namespace datahubIndexer
 {
@@ -54,9 +56,13 @@ namespace datahubIndexer
                 throw e;
             }
 
+            var isLargeMessage = false;
             foreach (var data in asset.Data) {
                 try {
                     ProcessDataFile(data);
+                    if (!string.IsNullOrWhiteSpace(data.Http.FileBase64)) {
+                        isLargeMessage = true;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -66,9 +72,13 @@ namespace datahubIndexer
             }
 
             try {
-                SendToLambda(asset);
+                if (isLargeMessage) {
+                    SendLargeMessage(asset);
+                } else {
+                    SendMessage(asset);
+                }  
             } catch (Exception e) {
-                Console.WriteLine($"Unable to invoke lambda for asset {asset.Id}. Error: {e.Message}");
+                Console.WriteLine($"Unable to send message for asset {asset.Id}. Error: {e.Message}");
                 throw e;
             }
         }
@@ -93,9 +103,13 @@ namespace datahubIndexer
                 var asset = assets[i];
                 Console.WriteLine($"Processing asset {i}, {asset.Id} {asset.Metadata.Title}");
 
+                var isLargeMessage = false;
                 foreach (var data in asset.Data) {
                     try {
                         ProcessDataFile(data);
+                        if (!string.IsNullOrWhiteSpace(data.Http.FileBase64)) {
+                            isLargeMessage = true;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -106,9 +120,13 @@ namespace datahubIndexer
                 }
 
                 try {
-                    SendToLambda(asset);
+                    if (isLargeMessage) {
+                        SendLargeMessage(asset);
+                    } else {
+                        SendMessage(asset);
+                    }  
                 } catch (Exception e) {
-                    Console.WriteLine($"Unable to invoke lambda for asset {asset.Id}. Error: {e.Message}");
+                    Console.WriteLine($"Unable to send message for asset {asset.Id}. Error: {e.Message}");
                     errors++;
                     continue;
                 }
@@ -139,7 +157,7 @@ namespace datahubIndexer
             }
         }
 
-        static void SendToLambda(Asset asset) {
+        static string ConvertAssetToMessage(Asset asset) {
             var message = new {
                 config = new {
                     elasticsearch = new {
@@ -161,16 +179,65 @@ namespace datahubIndexer
                 asset = asset
             };
 
-            var messageString = JsonConvert.SerializeObject(message, new JsonSerializerSettings{
+            return JsonConvert.SerializeObject(message, new JsonSerializerSettings{
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 NullValueHandling = NullValueHandling.Ignore
             });
+        }
 
-            // Console.WriteLine($"Sending message {messageString}");
-            var response = InvokeLambda(messageString);
+        static string GetS3PublishMessage(Asset asset) {
+            var message = new
+            {
+                config = new
+                {
+                    s3 = new
+                    {
+                        bucketName = Env.Var.LargeMessageBucket,
+                        objectKey = asset.Id
+                    },
+                    action = "s3-publish"
+                },
+                asset = new
+                {
+                    id = asset.Id
+                }
+            };
+
+            return JsonConvert.SerializeObject(message, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+        }
+
+        static void SendLargeMessage(Asset asset) {
+            Console.WriteLine($"Large message handling - putting object {asset.Id} in bucket {Env.Var.LargeMessageBucket}");
+            var assetMessage = ConvertAssetToMessage(asset);
+            var s3Response = PutS3Object(asset.Id, assetMessage);
+
+            if (s3Response != null && s3Response.HttpStatusCode == HttpStatusCode.OK) {
+                Console.WriteLine($"Successfully uploaded large message");
+            } else {
+                throw new Exception($"Something went wrong while uploading large message, {s3Response.HttpStatusCode}");
+            }
+
+            Console.WriteLine($"Sending s3-publish message to {Env.Var.LambdaFunction}");
+            var lambdaMessage = GetS3PublishMessage(asset);
+            var lambdaResponse = InvokeLambda(lambdaMessage);
+
+            if (lambdaResponse != null && lambdaResponse.StatusCode == 200 && lambdaResponse.FunctionError == null) {
+                Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda for {asset.Id}");
+            } else {
+                throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, {lambdaResponse.StatusCode} {lambdaResponse.FunctionError}");
+            }
+        }
+
+        static void SendMessage(Asset asset) {
+            var message = ConvertAssetToMessage(asset);
+            // Console.WriteLine($"Sending message {message}");
+            var response = InvokeLambda(message);
 
             if (response != null && response.StatusCode == 200 && response.FunctionError == null) {
-                Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda for {asset.Id}");
+                Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda");
             } else {
                 throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, {response.StatusCode} {response.FunctionError}");
             }
@@ -198,6 +265,23 @@ namespace datahubIndexer
             } else {
                 return new AmazonLambdaClient(
                     new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
+                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
+            }
+        }
+
+        static AmazonS3Client GetAmazonS3Client()
+        {
+            if (Env.Var.UseLocalstack) 
+            {
+                return new AmazonS3Client(new AmazonS3Config {
+                    ServiceURL = "http://localhost:4572",
+                    ForcePathStyle = true,
+                });
+            }
+            else 
+            {
+                return new AmazonS3Client(
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
         }
@@ -247,6 +331,19 @@ namespace datahubIndexer
             }
 
             return base64Encoding;
+        }
+
+        static PutObjectResponse PutS3Object(string recordId, string payload) {
+            using (var client = GetAmazonS3Client()) {
+                var request = new PutObjectRequest
+                {
+                    BucketName = Env.Var.LargeMessageBucket,
+                    Key = recordId,
+                    ContentBody = payload
+                };
+
+                return client.PutObjectAsync(request).GetAwaiter().GetResult();
+            }
         }
 
         static InvokeResponse InvokeLambda(string payload) {

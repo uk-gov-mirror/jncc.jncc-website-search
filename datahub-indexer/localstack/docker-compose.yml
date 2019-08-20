@@ -7,5 +7,5 @@ services:
       - '4563-4584:4563-4584'
       - '8080:8080'
     environment:
-      - SERVICES=dynamodb,lambda
+      - SERVICES=dynamodb,lambda,s3
       - DEBUG=1

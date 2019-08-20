@@ -17,6 +17,7 @@ namespace datahubIndexer
         public string EsSite                 { get; private set; }
         public string DynamoDbTable          { get; private set; }
         public string LambdaFunction         { get; private set; }
+        public string LargeMessageBucket     { get; private set; }
         public string DatahubAssetsUrl       { get; private set; }
         public bool UseLocalstack            { get; private set; } = false; 
         public int AssetQueryDelay           { get; private set; } = 0;
@@ -34,6 +35,7 @@ namespace datahubIndexer
             EsSite = GetVariable("ES_SITE");
             DynamoDbTable = GetVariable("DYNAMODB_TABLE");
             LambdaFunction = GetVariable("LAMBDA_FUNCTION");
+            LargeMessageBucket = GetVariable("LARGE_MESSAGE_BUCKET");
             DatahubAssetsUrl = GetVariable("DATAHUB_ASSETS_URL");
             UseLocalstack = Boolean.Parse(GetVariable("USE_LOCALSTACK"));
             AssetQueryDelay = Int32.Parse(GetVariable("ASSET_QUERY_DELAY"));
