@@ -52,7 +52,7 @@ import search.ingester.models.Document;
         }	
 
          // If a title exists in the document metadata replace the document title with it	
-        if (metadata.get("title") != null) {	
+        if (metadata.get("title") != null && !metadata.get("title").equalsIgnoreCase(document.getTitle())) {	
             document.setTitle(String.format("%s - %s", document.getTitle(), metadata.get("title")));	
         }	
 
