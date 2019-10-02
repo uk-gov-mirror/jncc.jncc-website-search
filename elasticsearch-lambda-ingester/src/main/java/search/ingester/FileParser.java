@@ -49,11 +49,17 @@ import search.ingester.models.Document;
         String newContent = handler.toString().replaceAll("\\s+", " ").trim();	
         if (!newContent.isEmpty()) {	
             document.setContent(newContent);	
-        }	
+        }
 
          // If a title exists in the document metadata replace the document title with it	
-        if (metadata.get("title") != null && !metadata.get("title").equalsIgnoreCase(document.getTitle())) {	
-            document.setTitle(String.format("%s - %s", document.getTitle(), metadata.get("title")));	
+        if (metadata.get("title") != null) {
+        
+            String mdTitle = metadata.get("title").trim();
+            String docTitle = document.getTitle().trim();
+        
+            if (!mdTitle.equalsIgnoreCase(docTitle)) {	
+                document.setTitle(String.format("%s - %s", docTitle, mdTitle));
+            }	
         }	
 
          // Clear b64 encoded file	
