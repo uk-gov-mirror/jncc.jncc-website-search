@@ -61,7 +61,7 @@ namespace assetIndexer
 
                         var assetId = String.Format("{0}-{1}",assetList.IdPrefix, asset.Id);
                         
-                        Console.WriteLine("Processing Asset {0}, {1} {2}", i, assetId, asset.Title);
+                        Console.WriteLine("Processing Asset {0}, {1} {2}", i+1, assetId, asset.Title);
 
                         if (AssetValidator.IsValid(asset, errors))
                         {
