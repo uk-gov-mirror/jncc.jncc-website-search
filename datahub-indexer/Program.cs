@@ -21,9 +21,6 @@ namespace datahubIndexer
 {
     class Program
     {
-        static AmazonLambdaClient lambdaClient;
-        static AmazonS3Client s3Client;
-
         public class Options {
             [Option('a', "assetId", Required = false, HelpText = "Asset GUID to be indexed")]
             public string AssetId { get; set; }
@@ -231,43 +228,37 @@ namespace datahubIndexer
         }
 
         static AmazonLambdaClient GetAmazonLambdaClient() {
-            if (lambdaClient == null)
-            {
-                if (Env.Var.UseLocalstack)
-                { 
-                    lambdaClient = new AmazonLambdaClient(new AmazonLambdaConfig {
-                        ServiceURL = "http://localhost:4574"
-                    });
-                } else {
-                    lambdaClient = new AmazonLambdaClient(
-                        new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
-                        RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
-                }
+
+            if (Env.Var.UseLocalstack)
+            { 
+                return new AmazonLambdaClient(new AmazonLambdaConfig {
+                    ServiceURL = "http://localhost:4574"
+                });
+            } else {
+                return new AmazonLambdaClient(
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
+                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
 
-            return lambdaClient;
         }
 
         static AmazonS3Client GetAmazonS3Client()
         {
-            if (s3Client == null)
+
+            if (Env.Var.UseLocalstack) 
             {
-                if (Env.Var.UseLocalstack) 
-                {
-                    s3Client = new AmazonS3Client(new AmazonS3Config {
-                        ServiceURL = "http://localhost:4572",
-                        ForcePathStyle = true,
-                    });
-                }
-                else 
-                {
-                    s3Client = new AmazonS3Client(
-                        new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
-                        RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
-                }
+                return new AmazonS3Client(new AmazonS3Config {
+                    ServiceURL = "http://localhost:4572",
+                    ForcePathStyle = true,
+                });
+            }
+            else 
+            {
+                return new AmazonS3Client(
+                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
+                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
 
-            return s3Client;
         }
 
         static Asset GetAsset(string id)
