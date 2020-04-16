@@ -1,10 +1,7 @@
 package search.ingester;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -48,17 +45,11 @@ public class Processor {
         System.out.println(
                 ":: Upserting doc " + doc.getId() + " for site " + doc.getSite() + " in index " + m.getIndex() + " ::");
 
-        deleteDatahubResourcesIfNecessary(m.getIndex(), doc);
-
-        // Prepare main document
+        // Prepare document
         prepareDocument(doc);
 
-        // Process resources if they exist
-        List<Document> resources = prepareResourceDocuments(m.getResources(), doc);
-
-        // Upload main document and resources
+        // Upload document
         upsertDocument(m.getIndex(), doc);
-        upsertDatahubResourcesIfAny(m.getIndex(), resources);
     }
 
     /**
@@ -78,54 +69,6 @@ public class Processor {
     }    
 
     /**
-     * Prepares resources attached to a parent document to be indexed in an ElasticSearch
-     * instance, calls the prepareDocument function to do generic tasks and adds in relevant
-     * info about the parent document to each document so that it can be submitted to 
-     * ElasticSearch, only used as part of datahub assets
-     * 
-     * TODO: Potentially need to kick out files we don't want to index i.e. non-pdf, currently 
-     * dealt with at supplier end of this process, could deal with it more cleanly
-     * 
-     * @param parent The parent document that contains these resources
-     * @param docs The attached list of resources (documents) for the parent resource
-     * @return A List of prepared documents ready to be pushed into an ElasticSearch index
-     * @throws IOException
-     */
-    private List<Document> prepareResourceDocuments(List<Document> docs, Document parent) throws IOException {
-        List<Document> outputs = new ArrayList<Document>();
-
-        if (docs != null && !docs.isEmpty()) {
-            System.out.println(":: Preparing " + docs.size() + " resources for indexing :: ");
-            
-            for (Document doc : docs) {
-                // TODO ...construct a stable ID from the docId and the title
-                // elasticsearch needs an ID but an ID of a "resource" is never really surfaced
-                doc.setId(UUID.randomUUID().toString());
-
-                // ensure the site it set (it might not have been in the incoming message)
-                doc.setSite(parent.getSite());
-
-                // set the parent information
-                doc.setParentId(parent.getId());
-                doc.setParentTitle(parent.getTitle());
-                doc.setParentResourceType(parent.getResourceType());
-                doc.setPublishedDate(parent.getPublishedDate());
-
-                // grab some generic info from the parent that should just be copied to the resources
-                // i.e. keywords, published date
-                doc.setKeywords(parent.getKeywords());
-                
-                prepareDocument(doc);
-
-                outputs.add(doc);
-            }
-            return outputs;
-        }
-
-        return outputs;
-    }    
-
-    /**
      * Upserts a prepared document into the current ElasticSearch index
      * 
      * @param index The index to put document into on the instance
@@ -136,41 +79,20 @@ public class Processor {
         elasticService.putDocument(index, doc);
     }
 
-    /**
-     * Upserts a list of prepared documents into the current ElasticSearch index
-     * 
-     * @param index The index to put the attached documents into on the instance
-     * @param resources The list of resources (documents) to be put into the given index
-     * @throws IOException
-     */
-    private void upsertDatahubResourcesIfAny(String index, List<Document> resources) throws IOException {
-        for (Document resource: resources) {
-            upsertDocument(index, resource);
-        }
-    }    
-
-    private void deleteDatahubResourcesIfNecessary(String index, Document doc) throws IOException {
-
-        // if this is a datahub doc, delete any existing resources
-        if (doc.getSite().equals("datahub")) {
-            elasticService.deleteByParentId(index, doc.getId());
-        }
+    private void extractContentFromFileBase64IfNecessary(Document doc) {	
+        // if this doc represents a "file" (e.g. a PDF) then it will have a file_base64	
+        // field	
+        // which we need to extract into the content field etc.	
+        if (doc.getFileBase64() != null) {	
+            try {	
+                // note this function mutates its argument (and returns it for good measure!)	
+                doc = fileParser.parseFile(doc);	
+            } catch (Exception err) {	
+                throw new RuntimeException(err);	
+            }	
+        }	
     }
-
-    private void extractContentFromFileBase64IfNecessary(Document doc) {
-        // if this doc represents a "file" (e.g. a PDF) then it will have a file_base64
-        // field
-        // which we need to extract into the content field etc.
-        if (doc.getFileBase64() != null) {
-            try {
-                // note this function mutates its argument (and returns it for good measure!)
-                doc = fileParser.parseFile(doc);
-            } catch (Exception err) {
-                throw new RuntimeException(err);
-            }
-        }
-    }
-
+    
     private void validateDocument(Document doc) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -190,8 +112,6 @@ public class Processor {
         System.out.println(
                 ":: Deleting doc " + doc.getId() + " for site " + doc.getSite() + " in index " + m.getIndex() + " ::");
 
-        // delete any child resources, and the document itself
-        deleteDatahubResourcesIfNecessary(index, m.getDocument());
         elasticService.deleteDocument(index, doc.getId());
     }
 

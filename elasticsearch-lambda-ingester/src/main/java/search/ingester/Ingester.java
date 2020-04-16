@@ -98,7 +98,7 @@ public class Ingester implements RequestHandler<SQSEvent, Void> {
         while ((line = reader.readLine()) != null){
             text = text + "\n" + line;
         }
-
+        
         // Return the extracted message object from the S3 JSON file
         // Automatically close `file` handler to sidestep long running lambda keeping in memory file references
         try (Jsonb jsonb = JsonbBuilder.create()) {

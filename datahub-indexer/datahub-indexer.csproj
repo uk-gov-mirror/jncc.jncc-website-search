@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>datahub_indexer</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aws4RequestSigner" Version="0.7.0" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.103.17" />
+    <PackageReference Include="CloneExtensions" Version="1.4.2" />
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+    <PackageReference Include="dotenv.net" Version="1.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.101.44" />
+    <PackageReference Include="AWSSDK.Lambda" Version="3.3.102.35" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.102.11" />
+  </ItemGroup>
+</Project>
