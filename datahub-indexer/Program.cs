@@ -15,11 +15,15 @@ using Amazon.Lambda.Model;
 using Newtonsoft.Json.Serialization;
 using CommandLine;
 using Amazon.S3.Model;
+using CloneExtensions;
 
 namespace datahubIndexer
 {
     class Program
     {
+        static AmazonLambdaClient lambdaClient;
+        static AmazonS3Client s3Client;
+
         public class Options {
             [Option('a', "assetId", Required = false, HelpText = "Asset GUID to be indexed")]
             public string AssetId { get; set; }
@@ -35,102 +39,27 @@ namespace datahubIndexer
             Console.WriteLine($"DynamoDB table {Env.Var.DynamoDbTable}");
             Console.WriteLine($"Lambda function {Env.Var.LambdaFunction}");
 
-            if (opts.AssetId != null && !string.IsNullOrWhiteSpace(opts.AssetId)) {
-                IndexAsset(opts.AssetId);
-            } else {
-                IndexAllAssets();
-            }
-        }
-
-        static void IndexAsset(string id) {
-            Console.WriteLine($"Starting indexing for asset {id}");
-
-            Asset asset;
-            try
-            {
-                asset = GetAsset(id);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to get asset from dynamo. Error: {0}", e.Message);
-                throw e;
-            }
-
-            var isLargeMessage = false;
-            foreach (var data in asset.Data) {
-                try {
-                    ProcessDataFile(data);
-                    if (!string.IsNullOrWhiteSpace(data.Http.FileBase64)) {
-                        isLargeMessage = true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Unable to get base 64 encoding for resource {data.Title}. Error: {e.Message}");
-                    continue;
-                }
-            }
-
-            try {
-                if (isLargeMessage) {
-                    SendLargeMessage(asset);
-                } else {
-                    SendMessage(asset);
-                }  
-            } catch (Exception e) {
-                Console.WriteLine($"Unable to send message for asset {asset.Id}. Error: {e.Message}");
-                throw e;
-            }
-        }
-
-        static void IndexAllAssets() {
-            Console.WriteLine("Starting indexing for all datahub assets");
-
-            int errors = 0;
             List<Asset> assets;
 
-            try
-            {
+            if (opts.AssetId != null && !string.IsNullOrWhiteSpace(opts.AssetId)) {
+                assets = new List<Asset> {
+                    GetAsset(opts.AssetId)
+                };
+            } else {
                 assets = GetAssets();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to get assets from dynamo. Error: {0}", e.Message);
-                throw e;
-            }
 
-            for (int i = 0; i < assets.Count; i++) {
-                var asset = assets[i];
-                Console.WriteLine($"Processing asset {i}, {asset.Id} {asset.Metadata.Title}");
+            var errors = 0;
 
-                var isLargeMessage = false;
-                foreach (var data in asset.Data) {
-                    try {
-                        ProcessDataFile(data);
-                        if (!string.IsNullOrWhiteSpace(data.Http.FileBase64)) {
-                            isLargeMessage = true;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine($"Unable to get base 64 encoding for resource {data.Title}. Error: {e.Message}");
-                        errors++;
-                        continue;
-                    }
+            assets.ForEach(asset => {
+                IndexAsset(asset, errors);
+
+                if (Env.Var.AssetQueryDelay > 0)
+                {
+                    Console.WriteLine("Waiting {0}ms before getting next asset", Env.Var.AssetQueryDelay);
+                    Thread.Sleep(Env.Var.AssetQueryDelay);
                 }
-
-                try {
-                    if (isLargeMessage) {
-                        SendLargeMessage(asset);
-                    } else {
-                        SendMessage(asset);
-                    }  
-                } catch (Exception e) {
-                    Console.WriteLine($"Unable to send message for asset {asset.Id}. Error: {e.Message}");
-                    errors++;
-                    continue;
-                }
-            }
+            });
 
             if (errors > 0)
             {
@@ -140,19 +69,64 @@ namespace datahubIndexer
             {
                 Console.WriteLine($"Indexing Completed for {assets.Count} assets, no errors");
             }
+
         }
 
-        static void ProcessDataFile(AssetData data) {
-             if (data.Http.FileExtension != null && data.Http.FileExtension.ToLower().Equals("pdf") && data.Http.FileBytes > 0) {
+
+        static void IndexAsset(Asset asset, int errors)
+        {
+            var messageAsset = asset.GetClone();
+
+            var isLargeMessage = false;
+
+            foreach (var data in messageAsset.Data)
+            {
+                try {
+                    GetFileData(data);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine($"Unable to get base 64 encoding for resource {data.Title}. Error: {e.Message}");
+                    errors++;
+                    continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.Http.FileBase64)) isLargeMessage = true;
+            }
+
+
+            try 
+            {
+                if (isLargeMessage)
+                {
+                    SendLargeMessage(messageAsset);
+                }
+                else 
+                {
+                    SendMessage(messageAsset);
+                }
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine($"Unable to send message for asset {asset.Id}. Error: {e.Message}");
+                errors++;
+            }
+        }
+
+        static void GetFileData(AssetData data) {
+             if (data.Http.FileExtension != null 
+                && data.Http.FileExtension.ToLower().Equals("pdf") 
+                && data.Http.FileBytes > 0) {
+
                 var url = new Uri(data.Http.Url);
                 
                 Console.WriteLine($"Getting base 64 encoding of {url}");
-                data.Http.FileBase64 = GetBase64Encoding(url);
 
-                if (Env.Var.AssetQueryDelay > 0)
+                using (var stream = new WebClient().OpenRead(url))
+                using (var memstream = new MemoryStream())
                 {
-                    Console.WriteLine("Waiting {0}ms before getting next asset", Env.Var.AssetQueryDelay);
-                    Thread.Sleep(Env.Var.AssetQueryDelay);
+                    stream.CopyTo(memstream);
+                    data.Http.FileBase64 = Convert.ToBase64String(memstream.ToArray());
                 }
             }
         }
@@ -233,7 +207,6 @@ namespace datahubIndexer
 
         static void SendMessage(Asset asset) {
             var message = ConvertAssetToMessage(asset);
-            // Console.WriteLine($"Sending message {message}");
             var response = InvokeLambda(message);
 
             if (response != null && response.StatusCode == 200 && response.FunctionError == null) {
@@ -254,36 +227,47 @@ namespace datahubIndexer
                     new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
                     RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
             }
+
         }
 
         static AmazonLambdaClient GetAmazonLambdaClient() {
-            if (Env.Var.UseLocalstack)
-            { 
-                return new AmazonLambdaClient(new AmazonLambdaConfig {
-                    ServiceURL = "http://localhost:4574"
-                });
-            } else {
-                return new AmazonLambdaClient(
-                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
-                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
+            if (lambdaClient == null)
+            {
+                if (Env.Var.UseLocalstack)
+                { 
+                    lambdaClient = new AmazonLambdaClient(new AmazonLambdaConfig {
+                        ServiceURL = "http://localhost:4574"
+                    });
+                } else {
+                    lambdaClient = new AmazonLambdaClient(
+                        new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey),
+                        RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
+                }
             }
+
+            return lambdaClient;
         }
 
         static AmazonS3Client GetAmazonS3Client()
         {
-            if (Env.Var.UseLocalstack) 
+            if (s3Client == null)
             {
-                return new AmazonS3Client(new AmazonS3Config {
-                    ServiceURL = "http://localhost:4572",
-                    ForcePathStyle = true,
-                });
+                if (Env.Var.UseLocalstack) 
+                {
+                    s3Client = new AmazonS3Client(new AmazonS3Config {
+                        ServiceURL = "http://localhost:4572",
+                        ForcePathStyle = true,
+                    });
+                }
+                else 
+                {
+                    s3Client = new AmazonS3Client(
+                        new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
+                        RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
+                }
             }
-            else 
-            {
-                return new AmazonS3Client(
-                    new BasicAWSCredentials(Env.Var.AwsAccessKeyId, Env.Var.AwsSecretAccessKey), 
-                    RegionEndpoint.GetBySystemName(Env.Var.AwsRegion));
-            }
+
+            return s3Client;
         }
 
         static Asset GetAsset(string id)
