@@ -49,7 +49,7 @@ namespace datahubIndexer
             var errors = 0;
 
             assets.ForEach(asset => {
-                IndexAsset(asset, errors);
+                IndexAsset(asset, ref errors);
 
                 if (Env.Var.AssetQueryDelay > 0)
                 {
@@ -70,7 +70,7 @@ namespace datahubIndexer
         }
 
 
-        static void IndexAsset(Asset asset, int errors)
+        static void IndexAsset(Asset asset, ref int errors)
         {
             var messageAsset = asset.GetClone();
 
