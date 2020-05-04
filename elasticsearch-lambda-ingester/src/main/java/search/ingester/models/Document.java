@@ -39,9 +39,6 @@ public class Document {
     @NotBlank
     @JsonbProperty("content_truncated")
     private String contentTruncated;
-    
-    @JsonbProperty("resource_type")
-    private String resourceType;
 
     @JsonbProperty("file_base64")
     private String fileBase64;
@@ -61,14 +58,8 @@ public class Document {
     private String publishedDate;
 
     @Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", message = "ID must be a UUID")
-    @JsonbProperty("parent_id")
-    private String parentId;
-
-    @JsonbProperty("parent_title")
-    private String parentTitle;
-
-    @JsonbProperty("parent_resource_type")
-    private String parentResourceType;
+    @JsonbProperty("asset_id")
+    private String assetId;
 
     @NotBlank
     @JsonbProperty("timestamp_utc")
@@ -92,9 +83,6 @@ public class Document {
     public String getContentTruncated() { return contentTruncated; }
     public void setContentTruncated(String contentTruncated) { this.contentTruncated = contentTruncated; }
 
-    public String getResourceType() { return resourceType; }
-    public void setResourceType(String resourceType) { this.resourceType = resourceType; }
-
     public String getFileBase64() { return fileBase64; }
     public void setFileBase64(String fileBase64) { this.fileBase64 = fileBase64; }
 
@@ -110,14 +98,8 @@ public class Document {
     public String getPublishedDate() { return publishedDate; }
     public void setPublishedDate(String publishedDate) { this.publishedDate = publishedDate; }
 
-    public String getParentId() { return parentId; }
-    public void setParentId(String parentId) { this.parentId = parentId; }
-
-    public String getParentTitle() { return parentTitle; }
-    public void setParentTitle(String parentTitle) { this.parentTitle = parentTitle; }
-
-    public String getParentResourceType() { return parentResourceType; }
-    public void setParentResourceType(String parentResourceType) { this.parentResourceType = parentResourceType; }
+    public String getAssetId() { return assetId; }
+    public void setAssetId(String assetId) { this.assetId = assetId; }
 
     public String getTimestampUtc() { return timestampUtc; }
     public void setTimestampUtc(String timestampUtc) { this.timestampUtc = timestampUtc; }

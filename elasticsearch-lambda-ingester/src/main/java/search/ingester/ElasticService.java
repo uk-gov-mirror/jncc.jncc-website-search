@@ -91,14 +91,4 @@ public class ElasticService {
             }
         }
     }    
-
-    public void deleteByParentId(String index, String parentDocId) throws IOException {
-
-        DeleteByQueryRequest req = new DeleteByQueryRequest(index);
-        req.setQuery(QueryBuilders.matchQuery("parent_id", parentDocId));
-
-        BulkByScrollResponse res = ElasticService.getEsClient(env).deleteByQuery(req, RequestOptions.DEFAULT);
-
-        // TODO: Need to check the response of this
-    }
 }
