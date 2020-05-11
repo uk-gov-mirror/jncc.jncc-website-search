@@ -40,6 +40,9 @@ public class Document {
     @JsonbProperty("content_truncated")
     private String contentTruncated;
 
+    @JsonbProperty("resource_type")	
+    private String resourceType;
+
     @JsonbProperty("file_base64")
     private String fileBase64;
 
@@ -82,6 +85,9 @@ public class Document {
 
     public String getContentTruncated() { return contentTruncated; }
     public void setContentTruncated(String contentTruncated) { this.contentTruncated = contentTruncated; }
+
+    public String getResourceType() { return resourceType; }
+    public void setResourceType(String resourceType) { this.resourceType = resourceType; }
 
     public String getFileBase64() { return fileBase64; }
     public void setFileBase64(String fileBase64) { this.fileBase64 = fileBase64; }
