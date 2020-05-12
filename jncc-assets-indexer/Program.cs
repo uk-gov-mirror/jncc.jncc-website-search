@@ -93,8 +93,9 @@ namespace assetIndexer
                                     title = asset.Title,
                                     url = file.Url,
                                     published_date = DateTime.Parse(asset.PublicationDate, culture, style).ToString("yyyy-MM-dd"),
+                                    resource_type = "publication",
                                     file_base64 = file.EncodedFile, // base-64 encoded file
-                                    file_extension = file.Extension,   // when this is a downloadable
+                                    file_extension = file.Extension,   // when this is a downloadable, e.g. pdf, csv
                                     file_bytes = file.Bytes.ToString(),   // file such as a PDF, etc.
                                 }
                             };
@@ -180,7 +181,7 @@ namespace assetIndexer
             using (var memstream = new MemoryStream())
             {
                 stream.CopyTo(memstream);
-                assetFile.Extension = Path.GetExtension(asset.FileName);
+                assetFile.Extension = Path.GetExtension(asset.FileName).Substring(1).ToLower();
                 assetFile.Bytes = memstream.Length;
                 assetFile.EncodedFile = Convert.ToBase64String(memstream.ToArray());
                 assetFile.Url = assetFileUrl;
