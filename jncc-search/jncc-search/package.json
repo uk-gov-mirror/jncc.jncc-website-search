@@ -1,0 +1,12 @@
+{
+  "name": "jncc-search",
+  "version": "0.0.1",
+  "description": "Single page search microsite used by the JNCC website, resource hub, and other microsites",
+  "main": "app.js",
+  "repository": "https://github.com/jncc/jncc-website-search",
+  "author": "jncc",
+  "license": "OGL-UK-3.0",
+  "dependencies": {},
+  "scripts": {},
+  "devDependencies": {}
+}

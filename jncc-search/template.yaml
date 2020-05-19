@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  jncc-search
+
+  Sample SAM Template for jncc-search
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  JnccSearchFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: jncc-search/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        JnccSearch:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /search
+            Method: any
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  JnccSearchApi:
+    Description: "API Gateway endpoint URL for Prod stage for jncc-search function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/search/"
+  JnccSearchFunction:
+    Description: "jncc-search Lambda Function ARN"
+    Value: !GetAtt JnccSearchFunction.Arn
+  JnccSearchFunctionIamRole:
+    Description: "Implicit IAM Role created for jncc-search function"
+    Value: !GetAtt JnccSearchFunctionRole.Arn
