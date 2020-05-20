@@ -1,4 +1,5 @@
 var AWS = require('aws-sdk');
+var ejs = require('ejs');
 
 var endpoint = new AWS.Endpoint('https://search-jncc-website-live-search-tzyc2xtacuslckr7ltc47dpvcu.eu-west-1.es.amazonaws.com');
 var creds = new AWS.EnvironmentCredentials('AWS');
@@ -18,10 +19,16 @@ let response;
  * 
  */
 exports.lambdaHandler = async (event, context) => {
+    var response = {
+        statusCode: 500,
+        body: `Oops something went wrong`
+    };
+    var htmlBody = ``;
+
     try {
         console.log('Starting jncc-search lambda');
 
-        var response = await new Promise((resolve, reject) => {
+        response = await new Promise((resolve, reject) => {
             var req = new AWS.HttpRequest(endpoint);
             
             var queryString = '';
@@ -69,22 +76,34 @@ exports.lambdaHandler = async (event, context) => {
                     respBody += chunk;
                 });
                 httpResp.on('end', () => {
-                resolve({
-                    statusCode: 200,
-                    body: JSON.stringify(JSON.parse(respBody), null, 4)
-                });
+                    resolve({
+                        statusCode: 200,
+                        body: JSON.stringify(JSON.parse(respBody), null, 4)
+                    });
                 });
             }, function(err) {
                 reject({
-                statusCode: 500,
-                body: 'Something went wrong!'
+                    statusCode: 500,
+                    body: 'Something went wrong!'
                 });
             });
         });
+
+        ejs.renderFile('index.ejs', {searchResults: response.body}, (err, html) => {
+            if (err) {
+                reject(err)
+            }
+            htmlBody = html
+        });
     } catch (err) {
-        console.log(err);
-        return err;
+        console.log(err)
+        return err
     }
+
+    response.headers = {
+        'Content-Type': 'text/html'
+    }
+    response.body = htmlBody
 
     return response
 };
