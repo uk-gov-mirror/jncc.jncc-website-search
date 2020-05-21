@@ -161,7 +161,18 @@
                 <div id="content">
                     <br />
                     Hello
-                    <%= searchResults %>
+                    <% searchResults.forEach(result => { %>
+                        <% if (result.highlight.title) { %>
+                        <h3><%- result.highlight.title %></h3>
+                        <% } else { %>
+                        <h3><%- result._source.title %></h3>
+                        <% } %>
+                        <% if (result.highlight.content) { %>
+                        <p><%- result.highlight.content %></p>
+                        <% } else { %>
+                        <p><%- result._source.content %></p>
+                        <% } %>
+                    <% }); %>
                     <br />
                 </div>
             </div>

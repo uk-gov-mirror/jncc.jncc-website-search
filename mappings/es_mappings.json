@@ -1,0 +1,78 @@
+{
+    "mappings": {
+        "_doc": {
+            "properties": {
+                "asset_id": {
+                    "type": "keyword"
+                },
+                "content": {
+                    "type": "text",
+                    "term_vector": "with_positions_offsets"
+                },
+                "content_truncated": {
+                    "type": "keyword",
+                    "index": false
+                },
+                "file_base64": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "file_bytes": {
+                    "type": "long",
+                    "index": false
+                },
+                "file_extension": {
+                    "type": "keyword"
+                },
+                "id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "keywords": {
+                    "type": "nested",
+                    "properties": {
+                        "value": {
+                            "type": "keyword"
+                        },
+                        "vocab": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "published_date": {
+                    "type": "date"
+                },
+                "resource_type": {
+                    "type": "keyword"
+                },
+                "site": {
+                    "type": "keyword"
+                },
+                "timestamp_utc": {
+                    "type": "date"
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "url": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}
