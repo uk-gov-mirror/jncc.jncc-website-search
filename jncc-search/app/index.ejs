@@ -169,22 +169,22 @@
                     <% if (hits && view != 'resources') { %>
                         Found <%= hits.total %> pages
                         <% hits.hits.forEach(result => { %>
-                            <% if (result.highlight.title) { %>
+                            <% if (result.highlight && result.highlight.title) { %>
                             <h3><%- result.highlight.title %></h3>
                             <% } else { %>
                             <h3><%- result._source.title %></h3>
                             <% } %>
                             <span><b>Published date</b>: <%= result._source.published_date %></span>
-                            <% if (result.highlight.content) { %>
+                            <% if (result.highlight && result.highlight.content) { %>
                             <p><%- result.highlight.content %></p>
                             <% } else { %>
-                            <p><%- result._source.content %></p>
+                            <p><%- result._source.content_truncated %></p>
                             <% } %>
                         <% }) %>
                     <% } else if (hits) { %>
                         Found <%= hits.total %> resources
                         <% hits.hits.forEach(result => { %>
-                            <% if (result.highlight.title) { %>
+                            <% if (result.highlight && result.highlight.title) { %>
                             <h3><%- result.highlight.title %></h3>
                             <% } else { %>
                             <h3><%- result._source.title %></h3>
@@ -192,10 +192,10 @@
                             <span><b>Published date</b>: <%= result._source.published_date %></span>
                             <span><b>Size</b>: <%= result._source.file_bytes %></span>
                             <span><b>File type</b>: <%= result._source.file_extension %></span> 
-                            <% if (result.highlight.content) { %>
+                            <% if (result.highlight && result.highlight.content) { %>
                             <p><%- result.highlight.content %></p>
                             <% } else { %>
-                            <p><%- result._source.content %></p>
+                            <p><%- result._source.content_truncated %></p>
                             <% } %>
                         <% }) %>
                     <% } else { %>
