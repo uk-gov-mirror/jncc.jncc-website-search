@@ -35,29 +35,25 @@ exports.lambdaHandler = async (event, context) => {
 
         if (event.queryStringParameters) {
             console.log("Received query string parameters")
+            if (event.queryStringParameters.q) {
+                queryTerms = event.queryStringParameters.q.split(' ')
+                console.log(`Query terms: ${JSON.stringify(queryTerms)}`)
+            }
             if (event.queryStringParameters.v) {
                 view = event.queryStringParameters.v
                 console.log(`View: ${view}`)
+            }
+            if (event.queryStringParameters.f) {
+                filters = event.queryStringParameters.f.split(',')
+                console.log(`Filters: ${JSON.stringify(filters)}`)
             }
             if (event.queryStringParameters.s) {
                 sortOption = event.queryStringParameters.s
                 console.log(`Sort option: ${sortOption}`)
             }
             if (event.queryStringParameters.p) {
-                pageStart = event.queryStringParameters.p * 
+                pageStart = event.queryStringParameters.p * env.ES_PAGE_SIZE
                 console.log(`Page start: ${pageStart}`)
-            }
-        }
-
-        if (event.multiValueQueryStringParameters) {
-            console.log(`Received multi value parameters`)
-            if (event.multiValueQueryStringParameters.q) {
-                queryTerms = event.multiValueQueryStringParameters.q
-                console.log(`Query terms: ${JSON.stringify(queryTerms)}`)
-            }
-            if (event.multiValueQueryStringParameters.f) {
-                filters = event.multiValueQueryStringParameters.f
-                console.log(`Filters: ${JSON.stringify(filters)}`)
             }
         }
 
@@ -75,19 +71,19 @@ exports.lambdaHandler = async (event, context) => {
                 console.log(`Successfully got response with ${hits.total} results`)
             },
             err => {
-                console.error(`Resource search query failed with error ${err}`)
+                console.error(`Resource search query failed with error ${JSON.stringify(err)}`)
             })
 
         // populate the template
         ejs.renderFile('index.ejs', {view: view, hits: hits}, (err, html) => {
             if (err) {
-                console.error(`HTML template rendering failed with error ${err}`)
+                console.error(`HTML template rendering failed with error ${JSON.stringify(err)}`)
                 throw new Error()
             }
             htmlBody = html
         });
     } catch (err) {
-        console.error(`Could not generate search results page, got error ${err}`)
+        console.error(`Could not generate search results page, got error ${JSON.stringify(err)}`)
         htmlBody = `Oops something went wrong`
     }
 

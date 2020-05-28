@@ -29,7 +29,7 @@ function buildEsPageQuery(queryTerms, sortOption, pageStart, pageSize) {
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
-            .fields(['title', 'content'])
+            .field('content')
         )
         .sort(getSortQuery(sortOption))
 
@@ -61,7 +61,7 @@ function buildEsResourceQuery(queryTerms, filters, sortOption, pageStart, pageSi
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
-            .fields(['title', 'content'])
+            .field('content')
         )
         .sort(getSortQuery(sortOption))
 

@@ -157,10 +157,15 @@
         </p>
                 
         <main id="main">
-            <div class="container">
+            <div class="container">                
                 <div id="content">
                     <br />
                     <h1>Search</h1>
+                    <form role="search" class="top-bar search-form input-group" id="search-form" data-animate="hinge-in-from-top spin-out">
+                        <label for="search-field" class="show-for-sr" accesskey="4">Search:</label>
+                        <input type="search" name="q" placeholder="Search jncc.gov.uk" class="input-group-field" id="search-field">
+                        <button class="input-group-button" aria-label="search-button"><i class="icon-search"></i></button>
+                    </form>
 
                     <ul class="tabs" id="results-tabs">
                         <li class="tabs-title is-active"><a href="?v=pages" aria-selected="<%= view !== 'resources' %>">Pages</a></li>
@@ -169,11 +174,7 @@
                     <% if (hits && view != 'resources') { %>
                         Found <%= hits.total %> pages
                         <% hits.hits.forEach(result => { %>
-                            <% if (result.highlight && result.highlight.title) { %>
-                            <h3><%- result.highlight.title %></h3>
-                            <% } else { %>
                             <h3><%- result._source.title %></h3>
-                            <% } %>
                             <span><b>Published date</b>: <%= result._source.published_date %></span>
                             <% if (result.highlight && result.highlight.content) { %>
                             <p><%- result.highlight.content %></p>
@@ -184,11 +185,7 @@
                     <% } else if (hits) { %>
                         Found <%= hits.total %> resources
                         <% hits.hits.forEach(result => { %>
-                            <% if (result.highlight && result.highlight.title) { %>
-                            <h3><%- result.highlight.title %></h3>
-                            <% } else { %>
                             <h3><%- result._source.title %></h3>
-                            <% } %>
                             <span><b>Published date</b>: <%= result._source.published_date %></span>
                             <span><b>Size</b>: <%= result._source.file_bytes %></span>
                             <span><b>File type</b>: <%= result._source.file_extension %></span> 
