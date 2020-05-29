@@ -13,40 +13,40 @@ const viewOptions = {
     RESOURCES: 'resources'
 }
 
-function buildEsPageQuery(queryTerms, sortOption, pageStart, pageSize) {
+function buildEsPageQuery(queryParams) {
     var requestBody = esb.requestBodySearch()
         .query(
             esb.boolQuery()
-                .should(getSearchTermQueries(queryTerms))
+                .should(getSearchTermQueries(queryParams.queryTerms))
                 .mustNot([
                     esb.existsQuery('resource_type'),
                     esb.existsQuery('file_extension')
                 ])
                 .minimumShouldMatch(1)
         )
-        .from(pageStart)
-        .size(pageSize)
+        .from(queryParams.pageStart)
+        .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
         )
-        .sort(getSortQuery(sortOption))
+        .sort(getSortQuery(queryParams.sortOption))
 
     return requestBody.toJSON()
 }
 
-function buildEsResourceQuery(queryTerms, filters, sortOption, pageStart, pageSize) {
+function buildEsResourceQuery(queryParams) {
 
     var requestBody = esb.requestBodySearch()
         .query(
             esb.boolQuery()
                 .must([
                     esb.boolQuery()
-                        .should(getSearchTermQueries(queryTerms))
+                        .should(getSearchTermQueries(queryParams.queryTerms))
                         .minimumShouldMatch(1),
                     esb.boolQuery()
-                        .should(getFileFilterQueries(filters))
+                        .should(getFileFilterQueries(queryParams.filters))
                         .minimumShouldMatch(1)
                 ])
                 .filter(esb.existsQuery('resource_type'))
@@ -56,14 +56,14 @@ function buildEsResourceQuery(queryTerms, filters, sortOption, pageStart, pageSi
             esb.termsAggregation('file_types', 'file_extension'),
             esb.missingAggregation('other', 'file_extension')
         ])
-        .from(pageStart)
-        .size(pageSize)
+        .from(queryParams.pageStart)
+        .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
         )
-        .sort(getSortQuery(sortOption))
+        .sort(getSortQuery(queryParams.sortOption))
 
     return requestBody.toJSON()
 }

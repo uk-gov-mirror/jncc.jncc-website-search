@@ -24,11 +24,14 @@ exports.lambdaHandler = async (event, context) => {
     var htmlBody = ''
 
     // default values
-    var view = esQueryBuilder.viewOptions.PAGES
-    var queryTerms = []
-    var sortOption = esQueryBuilder.sortOptions.RELEVANCE
-    var pageStart = 0
-    var filters = []
+    var queryParams = {
+        view: esQueryBuilder.viewOptions.PAGES,
+        queryTerms: [],
+        sortOption: esQueryBuilder.sortOptions.RELEVANCE,
+        pageStart: 0,
+        pageSize: env.ES_PAGE_SIZE,
+        filters: []
+    }
 
     try {
         console.log('Starting jncc-search lambda')
@@ -36,38 +39,39 @@ exports.lambdaHandler = async (event, context) => {
         if (event.queryStringParameters) {
             console.log("Received query string parameters")
             if (event.queryStringParameters.q) {
-                queryTerms = event.queryStringParameters.q.split(' ')
-                console.log(`Query terms: ${JSON.stringify(queryTerms)}`)
+                queryParams.queryTerms = event.queryStringParameters.q.split(' ')
             }
             if (event.queryStringParameters.v) {
-                view = event.queryStringParameters.v
-                console.log(`View: ${view}`)
+                queryParams.view = event.queryStringParameters.v
             }
             if (event.queryStringParameters.f) {
-                filters = event.queryStringParameters.f.split(',')
-                console.log(`Filters: ${JSON.stringify(filters)}`)
+                queryParams.filters = event.queryStringParameters.f.split(',')
             }
             if (event.queryStringParameters.s) {
-                sortOption = event.queryStringParameters.s
-                console.log(`Sort option: ${sortOption}`)
+                queryParams.sortOption = event.queryStringParameters.s
             }
             if (event.queryStringParameters.p) {
-                pageStart = event.queryStringParameters.p * env.ES_PAGE_SIZE
-                console.log(`Page start: ${pageStart}`)
+                queryParams.pageStart = event.queryStringParameters.p * queryParams.pageSize
             }
+            console.log(`Query params: ${JSON.stringify(queryParams)}`)
         }
 
         var payload = null
-        if (view == esQueryBuilder.viewOptions.RESOURCES) {
-            payload = esQueryBuilder.buildEsResourceQuery(queryTerms, filters, sortOption, pageStart, env.ES_PAGE_SIZE)
+        if (queryParams.view == esQueryBuilder.viewOptions.RESOURCES) {
+            payload = esQueryBuilder.buildEsResourceQuery(queryParams)
         } else {
-            payload = esQueryBuilder.buildEsPageQuery(queryTerms, sortOption, pageStart, env.ES_PAGE_SIZE)
+            payload = esQueryBuilder.buildEsPageQuery(queryParams)
         }
         
         var hits = null
+        var aggs = null
         await esService.queryElasticsearch(payload).then(
             response => {
-                hits = JSON.parse(response.body).hits
+                responseBody = JSON.parse(response.body)
+                hits = responseBody.hits
+                if (responseBody.aggregations) {
+                    aggs = responseBody.aggregations
+                }
                 console.log(`Successfully got response with ${hits.total} results`)
             },
             err => {
@@ -75,7 +79,7 @@ exports.lambdaHandler = async (event, context) => {
             })
 
         // populate the template
-        ejs.renderFile('index.ejs', {view: view, hits: hits}, (err, html) => {
+        ejs.renderFile('index.ejs', {queryParams: queryParams, hits: hits, aggs: aggs}, (err, html) => {
             if (err) {
                 console.error(`HTML template rendering failed with error ${JSON.stringify(err)}`)
                 throw new Error()

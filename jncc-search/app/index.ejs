@@ -15,6 +15,31 @@
 </head>
 <body>
     <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        // var queryParams = {
+        //     view: 'pages',
+        //     queryTerms: [],
+        //     sortOption: 'relevance',
+        //     pageStart: 0,
+        //     filters: []
+        // }
+
+        $(document).ready(function () {
+            $('#pages-tab-link').click(function(){
+                $('#viewOption').value = 'pages';
+                console.log($('#viewOption').value);
+                $('#search').submit();
+                return false; // stops the # appearing at the end of the link
+            });
+            $('#resources-tab-link').click(function(){
+                $('#viewOption').value = 'resources';
+                console.log($('#viewOption').value);
+                $('#search').submit();
+                return false;
+            });
+        });
+    </script>
     <div id="wrapper">
         <a class="accessibility" href="#main" accesskey="S">Skip to Content</a>
         <header id="header">
@@ -22,7 +47,7 @@
                 <strong class="logo">
                     <a href="#" accesskey="1"><img src="https://jncc.gov.uk/images/logo.png" alt="JNCC"></a>
                 </strong>
-                <form action="https://jncc.gov.uk/search" role="search" class="top-bar search-form input-group" id="search-form" novalidate="novalidate" data-animate="hinge-in-from-top spin-out">
+                <form role="search" class="top-bar search-form input-group" id="search-form" novalidate="novalidate" data-animate="hinge-in-from-top spin-out">
                     <label for="search-field" class="show-for-sr" accesskey="4">Search:</label>
                     <input type="search" name="q" placeholder="Search jncc.gov.uk" class="input-group-field" id="search-field">
                     <button class="input-group-button" aria-label="search-button"><i class="icon-search"></i></button>
@@ -157,49 +182,113 @@
         </p>
                 
         <main id="main">
-            <div class="container">                
-                <div id="content">
-                    <br />
-                    <h1>Search</h1>
-                    <form role="search" class="top-bar search-form input-group" id="search-form" data-animate="hinge-in-from-top spin-out">
-                        <label for="search-field" class="show-for-sr" accesskey="4">Search:</label>
-                        <input type="search" name="q" placeholder="Search jncc.gov.uk" class="input-group-field" id="search-field">
-                        <button class="input-group-button" aria-label="search-button"><i class="icon-search"></i></button>
-                    </form>
-
-                    <ul class="tabs" id="results-tabs">
-                        <li class="tabs-title is-active"><a href="?v=pages" aria-selected="<%= view !== 'resources' %>">Pages</a></li>
-                        <li class="tabs-title"><a href="?v=resources" aria-selected="<%= view === 'resources' %>">Resources</a></li>
-                    </ul>
-                    <% if (hits && view != 'resources') { %>
-                        Found <%= hits.total %> pages
-                        <% hits.hits.forEach(result => { %>
-                            <h3><%- result._source.title %></h3>
-                            <span><b>Published date</b>: <%= result._source.published_date %></span>
-                            <% if (result.highlight && result.highlight.content) { %>
-                            <p><%- result.highlight.content %></p>
-                            <% } else { %>
-                            <p><%- result._source.content_truncated %></p>
-                            <% } %>
-                        <% }) %>
-                    <% } else if (hits) { %>
-                        Found <%= hits.total %> resources
-                        <% hits.hits.forEach(result => { %>
-                            <h3><%- result._source.title %></h3>
-                            <span><b>Published date</b>: <%= result._source.published_date %></span>
-                            <span><b>Size</b>: <%= result._source.file_bytes %></span>
-                            <span><b>File type</b>: <%= result._source.file_extension %></span> 
-                            <% if (result.highlight && result.highlight.content) { %>
-                            <p><%- result.highlight.content %></p>
-                            <% } else { %>
-                            <p><%- result._source.content_truncated %></p>
-                            <% } %>
-                        <% }) %>
-                    <% } else { %>
-                        <p>Oops something went wrong</p>
-                    <% } %>
-                    <br />
+            <br />
+            <div class="container">
+                <h1>Search</h1>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-9 cell">
+                        <label for="sort-select" class="text-right middle">Sort:</label>
+                    </div>
+                    <div class="small-3 cell">
+                        <select id="sort-select" name="s" form="search" onchange="this.form.submit()">
+                        <option value="relevance">Relevance</option>
+                        <option value="title_asc">Title ascending</option>
+                        <option value="title_desc">Title descending</option>
+                        <option value="date_asc">Date ascending</option>
+                        <option value="date_desc">Date descending</option>
+                        </select>
+                    </div>
                 </div>
+                <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
+                    <aside id="sidebar">
+                        <form id="search" role="search" class="search-form input-group">
+                            <label for="sidebar-search-field">
+                                <input type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q" value="<%= queryParams.queryTerms.join(' ') %>">
+                            </label>
+                            <input type="hidden" id="viewOption" name="v" form="search">
+                            <button class="input-group-button" aria-label="sidebar-search-button"><i class="icon-search"></i></button>
+                        </form>
+                        <% if (aggs) { %>
+                            <form class="staff-checkbox-form">
+                                <h2>Filter</h2>
+                                <hr />
+                                <ul class="check-list no-bullet">
+                                    <% if (aggs.file_types && aggs.file_types.buckets) { %>
+                                        <% aggs.file_types.buckets.forEach(file_type => { %> 
+                                            <li>
+                                                <label for="<%= file_type.key %>">
+                                                    <input id="<%= file_type.key %>" type="checkbox" name="<%= file_type.key %>" value="<%= file_type.key %>" form="search" onchange="this.form.submit()">
+                                                    <span class="fake-input"></span><span class="fake-label"><%= file_type.key %> (<%= file_type.doc_count %>)</span>
+                                                </label>
+                                            </li>
+                                        <% }) %> 
+                                    <% } %>
+                                    <% if (aggs.other && aggs.other > 0) { %> 
+                                        <li>
+                                            <label for="other">
+                                                <input id="other" type="checkbox" name="other" value="Other" form="search" onchange="this.form.submit()">
+                                                <span class="fake-input"></span><span class="fake-label">Other (<%= aggs.other.doc_count %>)</span>
+                                            </label>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                                <hr />
+                            </form>
+                        <% } %>
+                    </aside>
+                    <div id="content">
+    
+                        <ul class="tabs" id="results-tabs">
+                            <li class="tabs-title <%= queryParams.view !== 'resources'? 'is-active' : '' %>">
+                                <a href="#" id="pages-tab-link" aria-selected="<%= queryParams.view !== 'resources' %>">Pages</a>
+                            </li>
+                            <li class="tabs-title <%= queryParams.view === 'resources'? 'is-active' : '' %>">
+                                <a href="#" id="resources-tab-link" aria-selected="<%= queryParams.view === 'resources' %>">Resources</a>
+                            </li>
+                        </ul>
+                        <br />
+                        <% if (hits && queryParams.view !== 'resources') { %>
+                            <p>Pages: <%= hits.total %> results
+                            <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
+                                for '<%= queryParams.queryTerms.join(' ') %>'
+                            <% } %>
+                            </p>
+                            <% hits.hits.forEach(result => { %>
+                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
+                                <span><b>Published date</b>: <%= result._source.published_date %></span>
+                                <% if (result.highlight && result.highlight.content) { %>
+                                <p><%- result.highlight.content %></p>
+                                <% } else { %>
+                                <p><%- result._source.content_truncated %></p>
+                                <% } %>
+                                <hr />
+                            <% }) %>
+                        <% } else if (hits) { %>
+                            <p>Resources: <%= hits.total %> results
+                            <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
+                                for '<%= queryParams.queryTerms.join(' ') %>'
+                            <% } %>
+                            </p>
+                            <% hits.hits.forEach(result => { %>
+                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
+                                <span><b>Published date</b>: <%= result._source.published_date %></span>
+                                <span><b>Size</b>: <%= result._source.file_bytes %></span>
+                                <span><b>File type</b>: <%= result._source.file_extension %></span> 
+                                <% if (result.highlight && result.highlight.content) { %>
+                                <p><%- result.highlight.content %></p>
+                                <% } else { %>
+                                <p><%- result._source.content_truncated %></p>
+                                <% } %>
+                                <hr />
+                            <% }) %>
+                        <% } else { %>
+                            <p>Oops something went wrong</p>
+                        <% } %>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                
             </div>
         </main>
         <footer id="footer" class="text-center medium-text-left">
