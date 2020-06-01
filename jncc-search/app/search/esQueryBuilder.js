@@ -41,16 +41,15 @@ function buildEsResourceQuery(queryParams) {
     var requestBody = esb.requestBodySearch()
         .query(
             esb.boolQuery()
-                .must([
-                    esb.boolQuery()
-                        .should(getSearchTermQueries(queryParams.queryTerms))
-                        .minimumShouldMatch(1),
-                    esb.boolQuery()
-                        .should(getFileFilterQueries(queryParams.filters))
-                        .minimumShouldMatch(1)
-                ])
+                .should(getSearchTermQueries(queryParams.queryTerms))
+                .minimumShouldMatch(1)
                 .filter(esb.existsQuery('resource_type'))
                 
+        )
+        .postFilter(
+            esb.boolQuery()
+                .should(getFileFilterQueries(queryParams.filters))
+                .minimumShouldMatch(1)
         )
         .aggs([
             esb.termsAggregation('file_types', 'file_extension'),

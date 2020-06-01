@@ -29,22 +29,20 @@
             initialisePage(queryParams);
 
             $('#search-form').submit(function(){
-                queryParams.queryTerms = this.elements.namedItem("q").value.split(' ');
+                queryParams.queryTerms = $('#search-input').val().split(' ');
                 queryParams.page = 0;
                 refreshSearch(queryParams);
                 return false; // don't let it actually submit
             });
             $('#pages-tab-link').click(function(){
                 queryParams.view = 'pages';
-                queryParams.sort = 'relevance';
                 queryParams.page = 0;
-                filters = [];
+                queryParams.filters = [];
                 refreshSearch(queryParams);
                 return false; 
             });
             $('#resources-tab-link').click(function(){
                 queryParams.view = 'resources';
-                queryParams.sort = 'relevance';
                 queryParams.page = 0;
                 refreshSearch(queryParams);
                 return false;
@@ -54,13 +52,22 @@
                 queryParams.page = 0;
                 refreshSearch(queryParams);
             });
+            $('#filter-form').find(':checkbox').change(function(){
+                if (this.checked && !queryParams.filters.includes(this.value)) {
+                    queryParams.filters.push(this.value);
+                } else if (!this.checked && queryParams.filters.includes(this.value)) {
+                    queryParams.filters.splice(queryParams.filters.indexOf(this.value), 1);
+                }
+                refreshSearch(queryParams);
+                return false;
+            });
         });
 
         function initialisePage(queryParams) {
             var queryTerms = getQueryVariable('q');
             if (queryTerms) {
                 queryParams.queryTerms = queryTerms.split('+');
-                $('#search-input').value = queryParams.queryTerms.join(' ');
+                $('#search-input').val(queryParams.queryTerms.join(' '));
             }
 
             var view = getQueryVariable('v');
@@ -82,6 +89,9 @@
             var filters = getQueryVariable('f');
             if (filters) {
                 queryParams.filters = filters.split(',');
+                queryParams.filters.forEach(filter => {
+                    $('#'+filter).prop('checked', true);
+                })
             }
         }
 
@@ -118,22 +128,20 @@
                     value: queryParams.filters.join(',')
                 });
             }
-
-            var queryString = updateQueryStringParameters(window.location.toString(), params);
+            console.log(params);
+            var queryString = updateQueryStringParameters(params);
             window.location = queryString;
         }
 
-        // https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter/15023688
-        function updateQueryStringParameters(uri, params) {            
-            params.forEach(param => {
-                var re = new RegExp("([?&])" + param.key + "=.*?(&|$)", "i");
-                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-                
-                if (uri.match(re)) {
-                    uri = uri.replace(re, '$1' + param.key + "=" + param.value + '$2');
+        function updateQueryStringParameters(params) { 
+            var baseUrl = window.location.toString().split("?")[0];           
+            var uri = baseUrl;
+            params.forEach(param => {                
+                if (params.indexOf(param) == 0) {
+                    uri = uri + "?" + param.key + "=" + param.value;
                 }
                 else {
-                    uri = uri + separator + param.key + "=" + param.value;
+                    uri = uri + "&" + param.key + "=" + param.value;
                 }
             });
             
@@ -315,12 +323,12 @@
                     <aside id="sidebar">
                         <form id="search-form" role="search" class="search-form input-group">
                             <label for="sidebar-search-field">
-                                <input id="search-input" type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q">
+                                <input id="search-input" type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q" form="search-form">
                             </label>
                             <button class="input-group-button" aria-label="sidebar-search-button"><i class="icon-search"></i></button>
                         </form>
                         <% if (aggs) { %>
-                            <form id="file-type-filter" class="staff-checkbox-form">
+                            <form id="filter-form" class="staff-checkbox-form">
                                 <h2>Filter</h2>
                                 <hr />
                                 <ul class="check-list no-bullet">
@@ -328,7 +336,7 @@
                                         <% aggs.file_types.buckets.forEach(file_type => { %> 
                                             <li>
                                                 <label for="<%= file_type.key %>">
-                                                    <input id="<%= file_type.key %>" type="checkbox" name="<%= file_type.key %>" value="<%= file_type.key %>" form="search">
+                                                    <input id="<%= file_type.key %>" type="checkbox" name="<%= file_type.key %>" value="<%= file_type.key %>">
                                                     <span class="fake-input"></span><span class="fake-label"><%= file_type.key %> (<%= file_type.doc_count %>)</span>
                                                 </label>
                                             </li>
@@ -337,7 +345,7 @@
                                     <% if (aggs.other && aggs.other.doc_count > 0) { %> 
                                         <li>
                                             <label for="other">
-                                                <input id="other" type="checkbox" name="other" value="Other" form="search">
+                                                <input id="other" type="checkbox" name="other" value="Other">
                                                 <span class="fake-input"></span><span class="fake-label">Other (<%= aggs.other.doc_count %>)</span>
                                             </label>
                                         </li>
