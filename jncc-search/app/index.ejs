@@ -17,28 +17,140 @@
     <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
     <script>
-        // var queryParams = {
-        //     view: 'pages',
-        //     queryTerms: [],
-        //     sortOption: 'relevance',
-        //     pageStart: 0,
-        //     filters: []
-        // }
+        var queryParams = {
+            queryTerms: [],
+            view: 'pages',
+            sort: 'relevance',
+            page: 0,
+            filters: []
+        }
 
         $(document).ready(function () {
+            initialisePage(queryParams);
+
+            $('#search-form').submit(function(){
+                queryParams.queryTerms = this.elements.namedItem("q").value.split(' ');
+                queryParams.page = 0;
+                refreshSearch(queryParams);
+                return false; // don't let it actually submit
+            });
             $('#pages-tab-link').click(function(){
-                $('#viewOption').value = 'pages';
-                console.log($('#viewOption').value);
-                $('#search').submit();
-                return false; // stops the # appearing at the end of the link
+                queryParams.view = 'pages';
+                queryParams.sort = 'relevance';
+                queryParams.page = 0;
+                filters = [];
+                refreshSearch(queryParams);
+                return false; 
             });
             $('#resources-tab-link').click(function(){
-                $('#viewOption').value = 'resources';
-                console.log($('#viewOption').value);
-                $('#search').submit();
+                queryParams.view = 'resources';
+                queryParams.sort = 'relevance';
+                queryParams.page = 0;
+                refreshSearch(queryParams);
                 return false;
             });
+            $('#sort-select').change(function(){
+                queryParams.sort = this.value;
+                queryParams.page = 0;
+                refreshSearch(queryParams);
+            });
         });
+
+        function initialisePage(queryParams) {
+            var queryTerms = getQueryVariable('q');
+            if (queryTerms) {
+                queryParams.queryTerms = queryTerms.split('+');
+                $('#search-input').value = queryParams.queryTerms.join(' ');
+            }
+
+            var view = getQueryVariable('v');
+            if (view) {
+                queryParams.view = view;
+            }
+
+            var sort = getQueryVariable('s');
+            if (sort) {
+                queryParams.sort = sort;
+                $('#sort-select').value = queryParams.sort;
+            }
+
+            var page = getQueryVariable('p');
+            if (page) {
+                queryParams.page = page;
+            }
+
+            var filters = getQueryVariable('f');
+            if (filters) {
+                queryParams.filters = filters.split(',');
+            }
+        }
+
+        function refreshSearch(queryParams) {
+            var params = [];
+
+            if (queryParams.queryTerms && queryParams.queryTerms.length > 0) {
+                params.push({
+                    key: 'q',
+                    value: queryParams.queryTerms.join('+')
+                });
+            }
+            if (queryParams.view) {
+                params.push({
+                    key: 'v',
+                    value: queryParams.view
+                });
+            }
+            if (queryParams.sort) {
+                params.push({
+                    key: 's',
+                    value: queryParams.sort
+                });
+            }
+            if (queryParams.page) {
+                params.push({
+                    key: 'p',
+                    value: queryParams.page
+                });
+            }
+            if (queryParams.filters && queryParams.filters.length > 0) {
+                params.push({
+                    key: 'f',
+                    value: queryParams.filters.join(',')
+                });
+            }
+
+            var queryString = updateQueryStringParameters(window.location.toString(), params);
+            window.location = queryString;
+        }
+
+        // https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter/15023688
+        function updateQueryStringParameters(uri, params) {            
+            params.forEach(param => {
+                var re = new RegExp("([?&])" + param.key + "=.*?(&|$)", "i");
+                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                
+                if (uri.match(re)) {
+                    uri = uri.replace(re, '$1' + param.key + "=" + param.value + '$2');
+                }
+                else {
+                    uri = uri + separator + param.key + "=" + param.value;
+                }
+            });
+            
+            return uri;
+        }
+
+        // https://css-tricks.com/snippets/javascript/get-url-variables/
+        function getQueryVariable(variable)
+        {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
     </script>
     <div id="wrapper">
         <a class="accessibility" href="#main" accesskey="S">Skip to Content</a>
@@ -190,7 +302,7 @@
                         <label for="sort-select" class="text-right middle">Sort:</label>
                     </div>
                     <div class="small-3 cell">
-                        <select id="sort-select" name="s" form="search" onchange="this.form.submit()">
+                        <select id="sort-select" name="s" form="search">
                         <option value="relevance">Relevance</option>
                         <option value="title_asc">Title ascending</option>
                         <option value="title_desc">Title descending</option>
@@ -201,15 +313,14 @@
                 </div>
                 <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
                     <aside id="sidebar">
-                        <form id="search" role="search" class="search-form input-group">
+                        <form id="search-form" role="search" class="search-form input-group">
                             <label for="sidebar-search-field">
-                                <input type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q" value="<%= queryParams.queryTerms.join(' ') %>">
+                                <input id="search-input" type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q">
                             </label>
-                            <input type="hidden" id="viewOption" name="v" form="search">
                             <button class="input-group-button" aria-label="sidebar-search-button"><i class="icon-search"></i></button>
                         </form>
                         <% if (aggs) { %>
-                            <form class="staff-checkbox-form">
+                            <form id="file-type-filter" class="staff-checkbox-form">
                                 <h2>Filter</h2>
                                 <hr />
                                 <ul class="check-list no-bullet">
@@ -217,16 +328,16 @@
                                         <% aggs.file_types.buckets.forEach(file_type => { %> 
                                             <li>
                                                 <label for="<%= file_type.key %>">
-                                                    <input id="<%= file_type.key %>" type="checkbox" name="<%= file_type.key %>" value="<%= file_type.key %>" form="search" onchange="this.form.submit()">
+                                                    <input id="<%= file_type.key %>" type="checkbox" name="<%= file_type.key %>" value="<%= file_type.key %>" form="search">
                                                     <span class="fake-input"></span><span class="fake-label"><%= file_type.key %> (<%= file_type.doc_count %>)</span>
                                                 </label>
                                             </li>
                                         <% }) %> 
                                     <% } %>
-                                    <% if (aggs.other && aggs.other > 0) { %> 
+                                    <% if (aggs.other && aggs.other.doc_count > 0) { %> 
                                         <li>
                                             <label for="other">
-                                                <input id="other" type="checkbox" name="other" value="Other" form="search" onchange="this.form.submit()">
+                                                <input id="other" type="checkbox" name="other" value="Other" form="search">
                                                 <span class="fake-input"></span><span class="fake-label">Other (<%= aggs.other.doc_count %>)</span>
                                             </label>
                                         </li>
@@ -273,7 +384,7 @@
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
                                 <span><b>Published date</b>: <%= result._source.published_date %></span>
                                 <span><b>Size</b>: <%= result._source.file_bytes %></span>
-                                <span><b>File type</b>: <%= result._source.file_extension %></span> 
+                                <span><b>File type</b>: <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content %></p>
                                 <% } else { %>
