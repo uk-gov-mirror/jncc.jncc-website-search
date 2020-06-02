@@ -24,7 +24,7 @@ function buildEsPageQuery(queryParams) {
                 ])
                 .minimumShouldMatch(1)
         )
-        .from(queryParams.pageStart)
+        .from(queryParams.pageStart-1)
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
@@ -55,7 +55,7 @@ function buildEsResourceQuery(queryParams) {
             esb.termsAggregation('file_types', 'file_extension'),
             esb.missingAggregation('other', 'file_extension')
         ])
-        .from(queryParams.pageStart)
+        .from(queryParams.pageStart-1)
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')

@@ -28,8 +28,8 @@ exports.lambdaHandler = async (event, context) => {
         view: esQueryBuilder.viewOptions.PAGES,
         queryTerms: [],
         sortOption: esQueryBuilder.sortOptions.RELEVANCE,
-        pageStart: 0,
-        pageSize: env.ES_PAGE_SIZE,
+        pageStart: 1,
+        pageSize: parseInt(env.ES_PAGE_SIZE),
         filters: []
     }
 
@@ -51,7 +51,7 @@ exports.lambdaHandler = async (event, context) => {
                 queryParams.sortOption = event.queryStringParameters.s
             }
             if (event.queryStringParameters.p) {
-                queryParams.pageStart = event.queryStringParameters.p * queryParams.pageSize
+                queryParams.pageStart = parseInt(event.queryStringParameters.p)
             }
             console.log(`Query params: ${JSON.stringify(queryParams)}`)
         }
@@ -81,13 +81,13 @@ exports.lambdaHandler = async (event, context) => {
         // populate the template
         ejs.renderFile('index.ejs', {queryParams: queryParams, hits: hits, aggs: aggs}, (err, html) => {
             if (err) {
-                console.error(`HTML template rendering failed with error ${JSON.stringify(err)}`)
+                console.error(`HTML template rendering failed with error ${err}`)
                 throw new Error()
             }
             htmlBody = html
         });
     } catch (err) {
-        console.error(`Could not generate search results page, got error ${JSON.stringify(err)}`)
+        console.error(`Could not generate search results page, got error ${err}`)
         htmlBody = `Oops something went wrong`
     }
 
