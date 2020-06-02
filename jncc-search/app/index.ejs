@@ -56,7 +56,7 @@ function getPaginationLink(queryParams, page) {
 }
 
 function updateQueryStringParameters(params) {         
-    var uri = "/";
+    var uri = '';
     params.forEach(param => {                
         if (params.indexOf(param) == 0) {
             uri = uri + "?" + param.key + "=" + param.value;
@@ -68,6 +68,20 @@ function updateQueryStringParameters(params) {
     
     return uri;
 }
+
+// https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 %> 
 <!doctype html>
 <html lang="en">
@@ -76,13 +90,15 @@ function updateQueryStringParameters(params) {
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Example JNCC microsite</title>
-    <link rel="stylesheet" href="https://jncc.gov.uk/css/app.css">
-    <link rel="shortcut icon" href="https://jncc.gov.uk/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/css/app.css">
+    <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://hub.jncc.gov.uk/css/site.css" >
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script>window.jQuery || document.write('<script src="https://jncc.gov.uk/js/lib/jquery-2.2.4.min.js" defer><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.0/js/foundation.min.js" defer></script>
-    <script src="https://jncc.gov.uk/js/app.js" defer></script>
+    <script src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/js/app.js" defer></script>
 </head>
 <body>
     <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
@@ -124,6 +140,7 @@ function updateQueryStringParameters(params) {
                 refreshSearch(queryParams);
             });
             $('#filter-form').find(':checkbox').change(function(){
+                queryParams.page = 0;
                 if (this.checked && !queryParams.filters.includes(this.value)) {
                     queryParams.filters.push(this.value);
                 } else if (!this.checked && queryParams.filters.includes(this.value)) {
@@ -467,7 +484,7 @@ function updateQueryStringParameters(params) {
                             <% hits.hits.forEach(result => { %>
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
                                 <span><b>Published date</b>: <%= result._source.published_date %></span>
-                                <span><b>Size</b>: <%= result._source.file_bytes %></span>
+                                <span><b>Size</b>: <%= formatBytes(result._source.file_bytes) %></span>
                                 <span><b>File type</b>: <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content %></p>
@@ -536,10 +553,8 @@ function updateQueryStringParameters(params) {
                             </ul>
                         </nav>
                         <br />
-                        <br />
                     </div>
                 </div>
-                
             </div>
         </main>
         <footer id="footer" class="text-center medium-text-left">
