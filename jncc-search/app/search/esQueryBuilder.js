@@ -41,10 +41,12 @@ function buildEsResourceQuery(queryParams) {
     var requestBody = esb.requestBodySearch()
         .query(
             esb.boolQuery()
-                .should(getSearchTermQueries(queryParams.queryTerms))
-                .minimumShouldMatch(1)
+                .must([
+                    esb.boolQuery()
+                        .should(getSearchTermQueries(queryParams.queryTerms))
+                        .minimumShouldMatch(1)
+                ])
                 .filter(esb.existsQuery('resource_type'))
-                
         )
         .postFilter(
             esb.boolQuery()
