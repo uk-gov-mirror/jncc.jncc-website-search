@@ -24,14 +24,14 @@ function buildEsPageQuery(queryParams) {
                 ])
                 .minimumShouldMatch(1)
         )
-        .from(queryParams.pageStart-1)
+        .from(queryParams.page-1)
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
         )
-        .sort(getSortQuery(queryParams.sortOption))
+        .sort(getSortQuery(queryParams.sort))
 
     return requestBody.toJSON()
 }
@@ -48,7 +48,7 @@ function buildEsResourceQuery(queryParams) {
                 ])
                 .filter(esb.existsQuery('resource_type'))
         )
-        .postFilter(
+        .postFilter( // post filter so that the aggregation counts aren't affected
             esb.boolQuery()
                 .should(getFileFilterQueries(queryParams.filters))
                 .minimumShouldMatch(1)
@@ -57,14 +57,14 @@ function buildEsResourceQuery(queryParams) {
             esb.termsAggregation('file_types', 'file_extension'),
             esb.missingAggregation('other', 'file_extension')
         ])
-        .from(queryParams.pageStart-1)
+        .from(queryParams.page-1)
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
         )
-        .sort(getSortQuery(queryParams.sortOption))
+        .sort(getSortQuery(queryParams.sort))
 
     return requestBody.toJSON()
 }

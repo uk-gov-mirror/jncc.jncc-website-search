@@ -1,6 +1,6 @@
 <%
-var visiblePagesBeforeOrAfterCurrentPage = Math.floor(queryParams.pageSize/2)-1;
-var totalPages = Math.ceil(hits.total/queryParams.pageSize);
+var visiblePagesBeforeOrAfterCurrentPage = queryParams ? Math.floor(queryParams.pageSize/2)-1 : 0;
+var totalPages = hits ? Math.ceil(hits.total/queryParams.pageSize) : 1;
 
 function getPaginationStart(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
@@ -20,51 +20,47 @@ function getPaginationEnd(page, pageSize) {
         return page + visiblePagesBeforeOrAfterCurrentPage;
     }
 }
-function getPaginationLink(queryParams, page) {
-    var params = [];
+function getUrlWithNewParam(queryParams, key, value) {
+    var params = []
 
     if (queryParams.queryTerms && queryParams.queryTerms.length > 0) {
-        params.push({
-            key: 'q',
-            value: queryParams.queryTerms.join('+')
-        });
+        params['q'] = queryParams.queryTerms.join('+')
     }
     if (queryParams.view) {
-        params.push({
-            key: 'v',
-            value: queryParams.view
-        });
+        params['v'] = queryParams.view
     }
-    if (queryParams.sortOption) {
-        params.push({
-            key: 's',
-            value: queryParams.sortOption
-        });
+    if (queryParams.sort) {
+        params['s'] = queryParams.sort
     }
     if (queryParams.filters && queryParams.filters.length > 0) {
-        params.push({
-            key: 'f',
-            value: queryParams.filters.join(',')
-        });
+        params['f'] = queryParams.filters.join(',')
     }
-    params.push({
-        key: 'p',
-        value: page
-    });
-    var queryStringParams = updateQueryStringParameters(params);
-    return queryStringParams;
+    if (queryParams.page) {
+        params['p'] = queryParams.page
+    }
+    
+    params[key] = value
+
+    if (key !== 'p') {
+        params['p'] = 0
+    }
+    if (key === 'q' || key === 'v') {
+        params['f'] = null
+    }
+
+    var queryStringParams = updateQueryStringParameters(params)
+    
+    return queryStringParams
 }
 
 function updateQueryStringParameters(params) {         
     var uri = '';
-    params.forEach(param => {                
-        if (params.indexOf(param) == 0) {
-            uri = uri + "?" + param.key + "=" + param.value;
-        }
-        else {
-            uri = uri + "&" + param.key + "=" + param.value;
-        }
+    Object.keys(params).forEach(key => {
+        if (params[key]) {
+            uri = uri + "&" + key + "=" + params[key];
+        }        
     });
+    uri = uri.replace('&','?') // replace first &
     
     return uri;
 }
@@ -90,20 +86,52 @@ function formatBytes(bytes, decimals = 2) {
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Example JNCC microsite</title>
-    <link rel="stylesheet" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/css/app.css">
-    <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/css/app.css">
+    <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
     integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://hub.jncc.gov.uk/css/site.css" >
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script>window.jQuery || document.write('<script src="https://jncc.gov.uk/js/lib/jquery-2.2.4.min.js" defer><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.0/js/foundation.min.js" defer></script>
-    <script src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/frontend/js/app.js" defer></script>
-</head>
-<body>
-    <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
-    <script>
+    <script src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/js/app.js" defer></script>
+    <style>
+        .results-detail {
+            margin-right: 0.5rem;
+        }
+        .results-pager {
+            text-align: center;
+        }
+        .pagination > li {
+            font-size: 1.1875rem;
+        }
+        .pagination > li.current > a {
+            color: white;
+        }
+        .pagination > li.current > a:hover {
+            background-color: rgb(45, 122, 41);
+        }
+
+        #results-tabs.tabs {
+            border: none;
+            margin-bottom: 0.5rem;
+        }
+        #results-tabs.tabs > .tabs-title.is-active {
+            /* use a box shadow instead of a border to keep the size of the div the same */
+            -webkit-box-shadow:inset 0px -3px 0px 0px #777;
+            -moz-box-shadow:inset 0px -3px 0px 0px #777;
+            box-shadow:inset 0px -3px 0px 0px #777;
+        }
+        #results-tabs.tabs > .tabs-title > a {
+            color: #666262;
+            background-color: white;
+            font-size: 95%;
+            /* padding: 1rem 1.5rem; */
+            outline: none; /* remove blue highlight when selected */
+            margin-bottom: 3px;
+            text-decoration: none;
+        }
+    </style>
+    <script defer>
         var queryParams = {
             queryTerms: [],
             view: 'pages',
@@ -112,7 +140,7 @@ function formatBytes(bytes, decimals = 2) {
             filters: []
         }
 
-        $(document).ready(function () {
+        window.onload = function () {
             initialisePage(queryParams);
 
             $('#main-search-form').submit(function(){
@@ -120,19 +148,6 @@ function formatBytes(bytes, decimals = 2) {
                 queryParams.page = 0;
                 refreshSearch(queryParams);
                 return false; // don't let it actually submit
-            });
-            $('#pages-tab-link').click(function(){
-                queryParams.view = 'pages';
-                queryParams.page = 0;
-                queryParams.filters = [];
-                refreshSearch(queryParams);
-                return false; 
-            });
-            $('#resources-tab-link').click(function(){
-                queryParams.view = 'resources';
-                queryParams.page = 0;
-                refreshSearch(queryParams);
-                return false;
             });
             $('#sort-select').change(function(){
                 queryParams.sort = this.value;
@@ -149,7 +164,7 @@ function formatBytes(bytes, decimals = 2) {
                 refreshSearch(queryParams);
                 return false;
             });
-        });
+        }
 
         function initialisePage(queryParams) {
             var queryTerms = getQueryVariable('q');
@@ -161,11 +176,6 @@ function formatBytes(bytes, decimals = 2) {
             var view = getQueryVariable('v');
             if (view) {
                 queryParams.view = view;
-                if (view === 'resources') {
-                    $('#resources-tab-item').addClass('is-active');
-                } else {
-                    $('#pages-tab-item').addClass('is-active');
-                }
             }
 
             var sort = getQueryVariable('s');
@@ -188,55 +198,45 @@ function formatBytes(bytes, decimals = 2) {
             }
         }
 
-        function refreshSearch(queryParams) {
-            var params = [];
+        function refreshSearch(queryParams, key, value) {
+            var params = []
 
             if (queryParams.queryTerms && queryParams.queryTerms.length > 0) {
-                params.push({
-                    key: 'q',
-                    value: queryParams.queryTerms.join('+')
-                });
+                params['q'] = queryParams.queryTerms.join('+')
             }
             if (queryParams.view) {
-                params.push({
-                    key: 'v',
-                    value: queryParams.view
-                });
+                params['v'] = queryParams.view
             }
             if (queryParams.sort) {
-                params.push({
-                    key: 's',
-                    value: queryParams.sort
-                });
-            }
-            if (queryParams.page) {
-                params.push({
-                    key: 'p',
-                    value: queryParams.page
-                });
+                params['s'] = queryParams.sort
             }
             if (queryParams.filters && queryParams.filters.length > 0) {
-                params.push({
-                    key: 'f',
-                    value: queryParams.filters.join(',')
-                });
+                params['f'] = queryParams.filters.join(',')
             }
-            console.log(params);
-            var queryString = updateQueryStringParameters(params);
-            window.location = queryString;
+            if (queryParams.page) {
+                params['p'] = queryParams.page
+            }
+            
+            params[key] = value
+
+            if (key !== 'p') {
+                params['p'] = 0
+            } else if (key === 'q' || key === 'v') {
+                params['f'] = null
+            }
+
+            var queryStringParams = updateQueryStringParameters(params)
+            window.location = queryStringParams;
         }
 
-        function updateQueryStringParameters(params) { 
-            var baseUrl = window.location.toString().split("?")[0];           
-            var uri = baseUrl;
-            params.forEach(param => {                
-                if (params.indexOf(param) == 0) {
-                    uri = uri + "?" + param.key + "=" + param.value;
-                }
-                else {
-                    uri = uri + "&" + param.key + "=" + param.value;
-                }
+        function updateQueryStringParameters(params) {         
+            var uri = '';
+            Object.keys(params).forEach(key => {
+                if (params[key]) {
+                    uri = uri + "&" + key + "=" + params[key];
+                }        
             });
+            uri = uri.replace('&','?') // replace first &
             
             return uri;
         }
@@ -253,6 +253,10 @@ function formatBytes(bytes, decimals = 2) {
             return(false);
         }
     </script>
+</head>
+<body>
+    <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
+    
     <div id="wrapper">
         <a class="accessibility" href="#main" accesskey="S">Skip to Content</a>
         <header id="header">
@@ -400,16 +404,18 @@ function formatBytes(bytes, decimals = 2) {
                 <h1>Search</h1>
                 <div class="grid-x grid-padding-x">
                     <div class="small-9 cell">
-                        <label for="sort-select" class="text-right middle">Sort:</label>
+                        <p class="text-right middle">Sort:</p>
                     </div>
                     <div class="small-3 cell">
-                        <select id="sort-select" name="s" form="search">
-                            <option value="relevance">Relevance</option>
-                            <option value="title_asc">Title ascending</option>
-                            <option value="title_desc">Title descending</option>
-                            <option value="date_asc">Date ascending</option>
-                            <option value="date_desc">Date descending</option>
-                        </select>
+                        <label for="sort-select">
+                            <select id="sort-select" name="s" form="search">
+                                <option value="relevance">Relevance</option>
+                                <option value="title_asc">Title ascending</option>
+                                <option value="title_desc">Title descending</option>
+                                <option value="date_asc">Date ascending</option>
+                                <option value="date_desc">Date descending</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
                 <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
@@ -420,7 +426,7 @@ function formatBytes(bytes, decimals = 2) {
                             </label>
                             <button class="input-group-button" aria-label="sidebar-search-button"><i class="icon-search"></i></button>
                         </form>
-                        <% if (aggs) { %>
+                        <% if (aggs && hits && hits.total > 0) { %>
                             <form id="filter-form" class="staff-checkbox-form">
                                 <h2>Filter</h2>
                                 <hr />
@@ -438,7 +444,7 @@ function formatBytes(bytes, decimals = 2) {
                                     <% if (aggs.other && aggs.other.doc_count > 0) { %> 
                                         <li>
                                             <label for="other">
-                                                <input id="other" type="checkbox" name="other" value="Other">
+                                                <input id="other" type="checkbox" name="other" value="other">
                                                 <span class="fake-input"></span><span class="fake-label">Other (<%= aggs.other.doc_count %>)</span>
                                             </label>
                                         </li>
@@ -449,13 +455,12 @@ function formatBytes(bytes, decimals = 2) {
                         <% } %>
                     </aside>
                     <div id="content">
-    
-                        <ul class="tabs" id="results-tabs">
-                            <li id="pages-tab-item" class="tabs-title">
-                                <a href="#" id="pages-tab-link" aria-selected="<%= queryParams.view !== 'resources' %>">Pages</a>
+                        <ul id="results-tabs" class="tabs">
+                            <li id="pages-tab-item" class="tabs-title <%= (queryParams.view !== 'resources') ? 'is-active' : '' %>">
+                                <a href="<%= getUrlWithNewParam(queryParams, 'v', 'pages') %>"  id="pages-tab-link" aria-selected="<%= queryParams.view !== 'resources' %>">Pages</a>
                             </li>
-                            <li id="resources-tab-item" class="tabs-title">
-                                <a href="#" id="resources-tab-link" aria-selected="<%= queryParams.view === 'resources' %>">Resources</a>
+                            <li id="resources-tab-item" class="tabs-title <%= (queryParams.view === 'resources') ? 'is-active' : '' %>">
+                                <a href="<%= getUrlWithNewParam(queryParams, 'v', 'resources') %>" id="resources-tab-link" aria-selected="<%= queryParams.view === 'resources' %>">Resources</a>
                             </li>
                         </ul>
                         <br />
@@ -467,7 +472,7 @@ function formatBytes(bytes, decimals = 2) {
                             </p>
                             <% hits.hits.forEach(result => { %>
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
-                                <span><b>Published date</b>: <%= result._source.published_date %></span>
+                                <span class="results-detail"><b>Published date</b>: <%= result._source.published_date %></span>
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content %></p>
                                 <% } else { %>
@@ -483,9 +488,9 @@ function formatBytes(bytes, decimals = 2) {
                             </p>
                             <% hits.hits.forEach(result => { %>
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
-                                <span><b>Published date</b>: <%= result._source.published_date %></span>
-                                <span><b>Size</b>: <%= formatBytes(result._source.file_bytes) %></span>
-                                <span><b>File type</b>: <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
+                                <span class="results-detail"><b>Published date</b>: <%= result._source.published_date %></span>
+                                <span class="results-detail"><b>Size</b>: <%= formatBytes(result._source.file_bytes) %></span>
+                                <span class="results-detail"><b>File type</b>: <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content %></p>
                                 <% } else { %>
@@ -496,62 +501,64 @@ function formatBytes(bytes, decimals = 2) {
                         <% } else { %>
                             <p>Oops something went wrong</p>
                         <% } %>
-                        <nav aria-label="Pagination" class="results-pager">
-                            <ul class="pagination">
-                                <% if (queryParams.pageStart === 1) { %>
-                                    <li class="pagination-previous disabled">Previous</li>
-                                <% } else { %>
-                                    <li class="pagination-previous"><a href="<%= getPaginationLink(queryParams, queryParams.pageStart - 1) %>">Previous</a></li>
-                                <% } %> 
-
-                                <% if (totalPages > 10) { %>
-                                    <%# add ellipsis to shorten list %>
-                                    <% if (queryParams.pageStart > visiblePagesBeforeOrAfterCurrentPage) { %>
-                                        <%# current page not near start so show page 1 %>
-                                        <li><a href="<%= getPaginationLink(queryParams,1) %>">1</a></li>
-                                        <% if ((queryParams.pageStart - visiblePagesBeforeOrAfterCurrentPage) !== 2) { %>
-                                            <%# don't bother with ellipsis if next number is 2 %>
-                                            <li class="ellipsis" aria-hidden="true"></li>
-                                        <% } %>
-                                    <% } %>
-                                    <% for (i = getPaginationStart(queryParams.pageStart, queryParams.pageSize); i <= getPaginationEnd(queryParams.pageStart, queryParams.pageSize); i++) { %>
-                                        <%# show the 4 pages either side of current page %>
-                                        <% if (i === queryParams.pageStart) { %>
-                                            <li class="current">
-                                        <% } else { %>
-                                            <li>
-                                        <% } %>  
-                                            <a href="<%= getPaginationLink(queryParams, i) %>"><%= i %></a>
-                                        </li>
-                                    <% } %>
-                                    <% if ((queryParams.pageStart + visiblePagesBeforeOrAfterCurrentPage) < totalPages) { %>
-                                        <% if ((queryParams.pageStart + visiblePagesBeforeOrAfterCurrentPage) !== (totalPages - 1)) { %>
-                                            <%# don't bother with ellipsis if next number is last page %>
-                                            <li class="ellipsis" aria-hidden="true"></li>
-                                        <% } %>
-                                        <%# current page not near start so show last page %>
-                                        <li><a href="<%= getPaginationLink(queryParams, totalPages) %>"><%= totalPages %></a></li>
-                                    <% } %>
-                                <% } else { %>
-                                    <%# show all pages without ellipsis %>
-                                    <% for (i = 1; i <= totalPages; i++) { %>
-                                        <% if (i === queryParams.pageStart) { %> 
-                                            <li class="current">
-                                        <% } else { %>
-                                            <li>
-                                        <% } %>  
-                                            <a href="<%= getPaginationLink(queryParams, i) %>"><%= i %></a>
-                                        </li>
+                        <% if (hits && hits.total > 0) { %> 
+                            <nav aria-label="Pagination" class="results-pager">
+                                <ul class="pagination">
+                                    <% if (queryParams.page === 1) { %>
+                                        <li class="pagination-previous disabled">Previous</li>
+                                    <% } else { %>
+                                        <li class="pagination-previous"><a href="<%= getUrlWithNewParam(queryParams, 'p', queryParams.page - 1) %>">Previous</a></li>
                                     <% } %> 
-                                <% } %> 
-                                
-                                <% if (queryParams.pageStart === totalPages) { %>
-                                    <li class="pagination-next disabled">Next</li>
-                                <% } else { %>
-                                    <li class="pagination-next"><a href="<%= getPaginationLink(queryParams, queryParams.pageStart + 1) %>">Next</a></li>
-                                <% } %>
-                            </ul>
-                        </nav>
+
+                                    <% if (totalPages > 10) { %>
+                                        <%# add ellipsis to shorten list %>
+                                        <% if (queryParams.page > visiblePagesBeforeOrAfterCurrentPage) { %>
+                                            <%# current page not near start so show page 1 %>
+                                            <li><a href="<%= getUrlWithNewParam(queryParams, 'p', 1) %>">1</a></li>
+                                            <% if ((queryParams.page - visiblePagesBeforeOrAfterCurrentPage) !== 2) { %>
+                                                <%# don't bother with ellipsis if next number is 2 %>
+                                                <li class="ellipsis" aria-hidden="true"></li>
+                                            <% } %>
+                                        <% } %>
+                                        <% for (i = getPaginationStart(queryParams.page, queryParams.pageSize); i <= getPaginationEnd(queryParams.page, queryParams.pageSize); i++) { %>
+                                            <%# show the 4 pages either side of current page %>
+                                            <% if (i === queryParams.page) { %>
+                                                <li class="current">
+                                            <% } else { %>
+                                                <li>
+                                            <% } %>  
+                                                <a href="<%= getUrlWithNewParam(queryParams, 'p', i) %>"><%= i %></a>
+                                            </li>
+                                        <% } %>
+                                        <% if ((queryParams.page + visiblePagesBeforeOrAfterCurrentPage) < totalPages) { %>
+                                            <% if ((queryParams.page + visiblePagesBeforeOrAfterCurrentPage) !== (totalPages - 1)) { %>
+                                                <%# don't bother with ellipsis if next number is last page %>
+                                                <li class="ellipsis" aria-hidden="true"></li>
+                                            <% } %>
+                                            <%# current page not near start so show last page %>
+                                            <li><a href="<%= getUrlWithNewParam(queryParams, 'p', totalPages) %>"><%= totalPages %></a></li>
+                                        <% } %>
+                                    <% } else { %>
+                                        <%# show all pages without ellipsis %>
+                                        <% for (i = 1; i <= totalPages; i++) { %>
+                                            <% if (i === queryParams.page) { %> 
+                                                <li class="current">
+                                            <% } else { %>
+                                                <li>
+                                            <% } %>  
+                                                <a href="<%= getUrlWithNewParam(queryParams, 'p', i) %>"><%= i %></a>
+                                            </li>
+                                        <% } %> 
+                                    <% } %> 
+                                    
+                                    <% if (queryParams.page === totalPages) { %>
+                                        <li class="pagination-next disabled">Next</li>
+                                    <% } else { %>
+                                        <li class="pagination-next"><a href="<%= getUrlWithNewParam(queryParams, 'p', queryParams.page + 1) %>">Next</a></li>
+                                    <% } %>
+                                </ul>
+                            </nav>
+                        <% } %> 
                         <br />
                     </div>
                 </div>

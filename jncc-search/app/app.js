@@ -27,8 +27,8 @@ exports.lambdaHandler = async (event, context) => {
     var queryParams = {
         view: esQueryBuilder.viewOptions.PAGES,
         queryTerms: [],
-        sortOption: esQueryBuilder.sortOptions.RELEVANCE,
-        pageStart: 1,
+        sort: esQueryBuilder.sortOptions.RELEVANCE,
+        page: 1,
         pageSize: parseInt(env.ES_PAGE_SIZE),
         filters: []
     }
@@ -48,10 +48,10 @@ exports.lambdaHandler = async (event, context) => {
                 queryParams.filters = event.queryStringParameters.f.split(',')
             }
             if (event.queryStringParameters.s) {
-                queryParams.sortOption = event.queryStringParameters.s
+                queryParams.sort = event.queryStringParameters.s
             }
             if (event.queryStringParameters.p) {
-                queryParams.pageStart = parseInt(event.queryStringParameters.p)
+                queryParams.page = parseInt(event.queryStringParameters.p)
             }
             console.log(`Query params: ${JSON.stringify(queryParams)}`)
         }
