@@ -152,6 +152,7 @@ function formatBytes(bytes, decimals = 2) {
             $('#main-search-form').submit(function(){
                 queryParams.queryTerms = $('#search-input').val().split(' ');
                 queryParams.page = 0;
+                queryParams.filters = [];
                 refreshSearch(queryParams);
                 return false; // don't let it actually submit
             });
