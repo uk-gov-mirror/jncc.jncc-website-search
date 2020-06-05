@@ -30,6 +30,8 @@ function buildEsPageQuery(queryParams) {
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
+            .numberOfFragments(1)
+            .scoreOrder('_score')
         )
         .sort(getSortQuery(queryParams.sort))
 
@@ -63,6 +65,8 @@ function buildEsResourceQuery(queryParams) {
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
+            .numberOfFragments(1)
+            .scoreOrder('_score')
         )
         .sort(getSortQuery(queryParams.sort))
 

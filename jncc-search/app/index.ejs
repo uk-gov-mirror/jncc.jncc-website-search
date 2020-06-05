@@ -1,21 +1,22 @@
 <%
-var visiblePagesBeforeOrAfterCurrentPage = queryParams ? Math.floor(queryParams.pageSize/2)-1 : 0;
-var totalPages = hits ? Math.ceil(hits.total/queryParams.pageSize) : 1;
+var maxConsecutivePages = 8
+var visiblePagesBeforeOrAfterCurrentPage = 3
+var totalPages = hits ? Math.ceil(hits.total/queryParams.pageSize) : 1
 
 function getPaginationStart(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
-        return 1;
+        return 1
     } else if ((page + visiblePagesBeforeOrAfterCurrentPage) >= totalPages) {
-        return totalPages - pageSize + 1;
+        return totalPages - maxConsecutivePages + 1
     } else {
         return page - visiblePagesBeforeOrAfterCurrentPage;
     }
 }
 function getPaginationEnd(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
-        return pageSize;
+        return maxConsecutivePages
     } else if ((page + visiblePagesBeforeOrAfterCurrentPage) >= totalPages) {
-        return totalPages;
+        return totalPages
     } else {
         return page + visiblePagesBeforeOrAfterCurrentPage;
     }
@@ -54,15 +55,15 @@ function getUrlWithNewParam(queryParams, key, value) {
 }
 
 function updateQueryStringParameters(params) {         
-    var uri = '';
+    var uri = ''
     Object.keys(params).forEach(key => {
         if (params[key]) {
-            uri = uri + "&" + key + "=" + params[key];
+            uri = uri + "&" + key + "=" + params[key]
         }        
     });
     uri = uri.replace('&','?') // replace first &
     
-    return uri;
+    return uri
 }
 
 // https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
@@ -77,8 +78,8 @@ function formatBytes(bytes, decimals = 2) {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+%>
 
-%> 
 <!doctype html>
 <html lang="en">
 <head>
@@ -98,6 +99,11 @@ function formatBytes(bytes, decimals = 2) {
         .results-detail {
             margin-right: 0.5rem;
         }
+        label.sort-label {
+            font-size: 1.1875rem;
+            margin-top: -0.4rem;
+        }
+
         .results-pager {
             text-align: center;
         }
@@ -404,18 +410,16 @@ function formatBytes(bytes, decimals = 2) {
                 <h1>Search</h1>
                 <div class="grid-x grid-padding-x">
                     <div class="small-9 cell">
-                        <p class="text-right middle">Sort:</p>
+                        <label for="sort-select" class="text-right middle sort-label">Sort:</label>
                     </div>
                     <div class="small-3 cell">
-                        <label for="sort-select">
-                            <select id="sort-select" name="s" form="search">
-                                <option value="relevance">Relevance</option>
-                                <option value="title_asc">Title ascending</option>
-                                <option value="title_desc">Title descending</option>
-                                <option value="date_asc">Date ascending</option>
-                                <option value="date_desc">Date descending</option>
-                            </select>
-                        </label>
+                        <select id="sort-select" class="sort-select" name="s" form="search">
+                            <option value="relevance">Relevance</option>
+                            <option value="title_asc">Title ascending</option>
+                            <option value="title_desc">Title descending</option>
+                            <option value="date_asc">Date ascending</option>
+                            <option value="date_desc">Date descending</option>
+                        </select>
                     </div>
                 </div>
                 <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
@@ -510,18 +514,17 @@ function formatBytes(bytes, decimals = 2) {
                                         <li class="pagination-previous"><a href="<%= getUrlWithNewParam(queryParams, 'p', queryParams.page - 1) %>">Previous</a></li>
                                     <% } %> 
 
-                                    <% if (totalPages > 10) { %>
-                                        <%# add ellipsis to shorten list %>
-                                        <% if (queryParams.page > visiblePagesBeforeOrAfterCurrentPage) { %>
+                                    <% if (totalPages > maxConsecutivePages) { %>
+                                        <% if ((queryParams.page - visiblePagesBeforeOrAfterCurrentPage) > 1) { %>
                                             <%# current page not near start so show page 1 %>
                                             <li><a href="<%= getUrlWithNewParam(queryParams, 'p', 1) %>">1</a></li>
-                                            <% if ((queryParams.page - visiblePagesBeforeOrAfterCurrentPage) !== 2) { %>
-                                                <%# don't bother with ellipsis if next number is 2 %>
+                                            <% if ((queryParams.page - visiblePagesBeforeOrAfterCurrentPage) > 2) { %>
+                                                <%# show ellipsis unless it would be redundant %>
                                                 <li class="ellipsis" aria-hidden="true"></li>
                                             <% } %>
                                         <% } %>
                                         <% for (i = getPaginationStart(queryParams.page, queryParams.pageSize); i <= getPaginationEnd(queryParams.page, queryParams.pageSize); i++) { %>
-                                            <%# show the 4 pages either side of current page %>
+                                            <%# show x pages either side of current page %>
                                             <% if (i === queryParams.page) { %>
                                                 <li class="current">
                                             <% } else { %>
@@ -532,7 +535,7 @@ function formatBytes(bytes, decimals = 2) {
                                         <% } %>
                                         <% if ((queryParams.page + visiblePagesBeforeOrAfterCurrentPage) < totalPages) { %>
                                             <% if ((queryParams.page + visiblePagesBeforeOrAfterCurrentPage) !== (totalPages - 1)) { %>
-                                                <%# don't bother with ellipsis if next number is last page %>
+                                                <%# show ellipsis unless it would be redundant %>
                                                 <li class="ellipsis" aria-hidden="true"></li>
                                             <% } %>
                                             <%# current page not near start so show last page %>

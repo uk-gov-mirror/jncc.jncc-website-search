@@ -85,9 +85,11 @@ exports.lambdaHandler = async (event, context) => {
                 throw new Error()
             }
             htmlBody = html
+            response.statusCode = 200
         });
     } catch (err) {
         console.error(`Could not generate search results page, got error ${err}`)
+        response.statusCode = 500
         htmlBody = `Oops something went wrong`
     }
 
