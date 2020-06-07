@@ -24,13 +24,13 @@ function buildEsPageQuery(queryParams) {
                 ])
                 .minimumShouldMatch(1)
         )
-        .from(queryParams.page-1)
+        .from(getPageStartIndex(queryParams.page, queryParams.pageSize))
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
-            .numberOfFragments(1)
+            .numberOfFragments(2)
             .scoreOrder('_score')
         )
         .sort(getSortQuery(queryParams.sort))
@@ -59,18 +59,26 @@ function buildEsResourceQuery(queryParams) {
             esb.termsAggregation('file_types', 'file_extension'),
             esb.missingAggregation('other', 'file_extension')
         ])
-        .from(queryParams.page-1)
+        .from(getPageStartIndex(queryParams.page, queryParams.pageSize))
         .size(queryParams.pageSize)
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
             .field('content')
-            .numberOfFragments(1)
+            .numberOfFragments(2)
             .scoreOrder('_score')
         )
         .sort(getSortQuery(queryParams.sort))
 
     return requestBody.toJSON()
+}
+
+function getPageStartIndex(page, pageSize) {
+    if (page > 1) {
+        return (page-1)*pageSize
+    }
+
+    return 0;
 }
 
 function getSearchTermQueries(queryTerms) {

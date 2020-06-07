@@ -17,6 +17,7 @@ const env = require('env')
  * 
  */
 exports.lambdaHandler = async (event, context) => {
+    
     var response = {
         statusCode: 500,
         body: `Oops something went wrong`
@@ -67,7 +68,7 @@ exports.lambdaHandler = async (event, context) => {
         var aggs = null
         await esService.queryElasticsearch(payload).then(
             response => {
-                responseBody = JSON.parse(response.body)
+                var responseBody = JSON.parse(response.body)
                 hits = responseBody.hits
                 if (responseBody.aggregations) {
                     aggs = responseBody.aggregations
@@ -76,10 +77,13 @@ exports.lambdaHandler = async (event, context) => {
             },
             err => {
                 console.error(`Resource search query failed with error ${JSON.stringify(err)}`)
-            })
+            }
+        )
 
+        var cookiePolicyAccepted = isCookiePolicyAccepted(event)
+        
         // populate the template
-        ejs.renderFile('index.ejs', {queryParams: queryParams, hits: hits, aggs: aggs}, (err, html) => {
+        ejs.renderFile('index.ejs', {queryParams: queryParams, hits: hits, aggs: aggs, cookiePolicyAccepted: cookiePolicyAccepted}, (err, html) => {
             if (err) {
                 console.error(`HTML template rendering failed with error ${err}`)
                 throw new Error()
@@ -99,5 +103,17 @@ exports.lambdaHandler = async (event, context) => {
     response.body = htmlBody
 
     return response
-};
+}
 
+function isCookiePolicyAccepted(event) {
+    var accepted = false
+
+    // shoddy workaround for different payload formats
+    if (event.headers && event.headers.Cookie) {
+        accepted = event.headers.Cookie.includes('cookiePolicyAcceptance=true')
+    } else if (event.cookies) {
+        accepted = event.cookies.includes('cookiePolicyAcceptance=true')
+    }
+
+    return accepted
+}

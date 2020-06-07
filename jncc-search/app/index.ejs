@@ -3,6 +3,10 @@ var maxConsecutivePages = 8
 var visiblePagesBeforeOrAfterCurrentPage = 3
 var totalPages = hits ? Math.ceil(hits.total/queryParams.pageSize) : 1
 
+function isCookiePolicyAccepted() {
+    return false
+}
+
 function getPaginationStart(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
         return 1
@@ -86,7 +90,7 @@ function formatBytes(bytes, decimals = 2) {
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Example JNCC microsite</title>
+    <title>JNCC Search</title>
     <link rel="stylesheet" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/css/app.css">
     <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
@@ -98,10 +102,6 @@ function formatBytes(bytes, decimals = 2) {
     <style>
         .results-detail {
             margin-right: 0.5rem;
-        }
-        label.sort-label {
-            font-size: 1.1875rem;
-            margin-top: -0.4rem;
         }
 
         .results-pager {
@@ -137,7 +137,7 @@ function formatBytes(bytes, decimals = 2) {
             text-decoration: none;
         }
     </style>
-    <script defer>
+    <script>
         var queryParams = {
             queryTerms: [],
             view: 'pages',
@@ -146,7 +146,7 @@ function formatBytes(bytes, decimals = 2) {
             filters: []
         }
 
-        window.onload = function () {
+        window.onload = function() {
             initialisePage(queryParams);
 
             $('#main-search-form').submit(function(){
@@ -154,7 +154,7 @@ function formatBytes(bytes, decimals = 2) {
                 queryParams.page = 0;
                 queryParams.filters = [];
                 refreshSearch(queryParams);
-                return false; // don't let it actually submit
+                event.preventDefault(); // don't let it actually submit
             });
             $('#sort-select').change(function(){
                 queryParams.sort = this.value;
@@ -162,16 +162,17 @@ function formatBytes(bytes, decimals = 2) {
                 refreshSearch(queryParams);
             });
             $('#filter-form').find(':checkbox').change(function(){
+                event.preventDefault()
                 queryParams.page = 0;
-                if (this.checked && !queryParams.filters.includes(this.value)) {
+                if (this.checked && queryParams.filters.indexOf(this.value) < 0) {
                     queryParams.filters.push(this.value);
-                } else if (!this.checked && queryParams.filters.includes(this.value)) {
+                } else if (!this.checked && queryParams.filters.indexOf(this.value) > -1) {
                     queryParams.filters.splice(queryParams.filters.indexOf(this.value), 1);
                 }
                 refreshSearch(queryParams);
-                return false;
+                event.preventDefault();
             });
-        }
+        };
 
         function initialisePage(queryParams) {
             var queryTerms = getQueryVariable('q');
@@ -199,9 +200,9 @@ function formatBytes(bytes, decimals = 2) {
             var filters = getQueryVariable('f');
             if (filters) {
                 queryParams.filters = filters.split(',');
-                queryParams.filters.forEach(filter => {
-                    $('#'+filter).prop('checked', true);
-                })
+                for (var i = 0; i < queryParams.filters.length; i++) {
+                    $('#'+queryParams.filters[i]).prop('checked', true);
+                }
             }
         }
 
@@ -238,11 +239,11 @@ function formatBytes(bytes, decimals = 2) {
 
         function updateQueryStringParameters(params) {         
             var uri = '';
-            Object.keys(params).forEach(key => {
+            for (var key in params) {
                 if (params[key]) {
                     uri = uri + "&" + key + "=" + params[key];
                 }        
-            });
+            };
             uri = uri.replace('&','?') // replace first &
             
             return uri;
@@ -409,32 +410,29 @@ function formatBytes(bytes, decimals = 2) {
             <br />
             <div class="container">
                 <h1>Search</h1>
-                <div class="grid-x grid-padding-x">
-                    <div class="small-9 cell">
-                        <label for="sort-select" class="text-right middle sort-label">Sort:</label>
-                    </div>
-                    <div class="small-3 cell">
-                        <select id="sort-select" class="sort-select" name="s" form="search">
+                <p></p>
+                <form id="main-search-form" role="search" class="search-form input-group" style="position: static; max-width: 100%;">
+                    <label for="search-input" class="show-for-sr">Search</label>
+                    <input id="search-input" type="search" placeholder="Search" class="input-group-field" aria-label="Search" name="q" form="main-search-form">
+                    <button class="input-group-button" aria-label="main-search-button"><i class="icon-search"></i></button>
+                </form>
+                <br class="hide-for-small-only" />
+                <br class="hide-for-small-only" />
+                <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
+                    <aside id="sidebar">
+                        <h2>Sort</h2>
+                        <select id="sort-select" class="sort-select" name="s" form="main-search-form">
                             <option value="relevance">Relevance</option>
                             <option value="title_asc">Title ascending</option>
                             <option value="title_desc">Title descending</option>
                             <option value="date_asc">Date ascending</option>
                             <option value="date_desc">Date descending</option>
                         </select>
-                    </div>
-                </div>
-                <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
-                    <aside id="sidebar">
-                        <form id="main-search-form" role="search" class="search-form input-group">
-                            <label for="sidebar-search-field">
-                                <input id="search-input" type="search" placeholder="Search" class="input-group-field" id="sidebar-search-field" aria-label="Sidebar Search" name="q" form="main-search-form">
-                            </label>
-                            <button class="input-group-button" aria-label="sidebar-search-button"><i class="icon-search"></i></button>
-                        </form>
                         <% if (aggs && hits && hits.total > 0) { %>
+                            <hr />
                             <form id="filter-form" class="staff-checkbox-form">
                                 <h2>Filter</h2>
-                                <hr />
+                                
                                 <ul class="check-list no-bullet">
                                     <% if (aggs.file_types && aggs.file_types.buckets) { %>
                                         <% aggs.file_types.buckets.forEach(file_type => { %> 
@@ -479,7 +477,7 @@ function formatBytes(bytes, decimals = 2) {
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
                                 <span class="results-detail"><b>Published date</b>: <%= result._source.published_date %></span>
                                 <% if (result.highlight && result.highlight.content) { %>
-                                <p><%- result.highlight.content %></p>
+                                <p><%- result.highlight.content.join(" ... ") %></p>
                                 <% } else { %>
                                 <p><%- result._source.content_truncated %></p>
                                 <% } %>
@@ -624,5 +622,24 @@ function formatBytes(bytes, decimals = 2) {
 		</footer>
     </div>
     <a class="accessibility" href="#wrapper">Back to top</a>
+
+    <!-- Cookie Consent Setup -->
+    <div data-cookie-banner-container class="sticky-cookie"></div>
+    <% if (!cookiePolicyAccepted) { %> 
+    <script type="text/html" class="sticky-cookie" id="cookie-banner-template" data-cookie-name="cookiePolicyAcceptance" data-cookie-duration="20">
+        <div class="row expanded cookie-policy" data-closable>
+            <div class="container row">
+                <div class="cookie-banner-text columns small-12 medium-9 large-9">
+                    We use cookies to track usage of our site. Details of these can be found on our <a href="https://jncc.gov.uk/about-jncc/corporate-information/cookie-policy/" title="Cookie policy">Cookie Policy</a>. You may choose to <button class="buttonLink" onclick="CookieDisagreement()">decline all tracking cookies</button>, but if you do some key features may not work as expected.
+                </div>
+                <div class="columns small-12 medium-3 large-3">
+                    <p class="cookie-button-container">
+                        <button class="cookie-button" onclick="CookieAgreement()" id="Agree">Agree &amp; Close</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </script>
+    <% } %> 
 </body>
 </html>
