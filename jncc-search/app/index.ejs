@@ -162,7 +162,6 @@ function formatBytes(bytes, decimals = 2) {
                 refreshSearch(queryParams);
             });
             $('#filter-form').find(':checkbox').change(function(){
-                event.preventDefault()
                 queryParams.page = 0;
                 if (this.checked && queryParams.filters.indexOf(this.value) < 0) {
                     queryParams.filters.push(this.value);
