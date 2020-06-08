@@ -83,7 +83,6 @@ function formatBytes(bytes, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 %>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -95,8 +94,8 @@ function formatBytes(bytes, decimals = 2) {
     <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
     integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
-    <script>window.jQuery || document.write('<script src="https://jncc.gov.uk/js/lib/jquery-2.2.4.min.js" defer><\/script>')</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="https://jncc.gov.uk/js/lib/jquery-2.2.4.min.js"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.0/js/foundation.min.js" defer></script>
     <script src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/js/app.js" defer></script>
     <style>
@@ -146,22 +145,28 @@ function formatBytes(bytes, decimals = 2) {
             filters: []
         }
 
-        window.onload = function() {
+        $(document).ready(function() {
+            
             initialisePage(queryParams);
 
-            $('#main-search-form').submit(function(){
+            $('#main-search-form').on('submit', function(e){
+                e.preventDefault(); // don't let it actually submit
+                e.returnValue = false;
                 queryParams.queryTerms = $('#search-input').val().split(' ');
                 queryParams.page = 0;
                 queryParams.filters = [];
                 refreshSearch(queryParams);
-                event.preventDefault(); // don't let it actually submit
             });
-            $('#sort-select').change(function(){
+            $('#sort-select').on('change', function(e){
+                e.preventDefault();
+                e.returnValue = false;
                 queryParams.sort = this.value;
                 queryParams.page = 0;
                 refreshSearch(queryParams);
             });
-            $('#filter-form').find(':checkbox').change(function(){
+            $('#filter-form').find(':checkbox').on('change', function(e){
+                e.preventDefault();
+                e.returnValue = false;
                 queryParams.page = 0;
                 if (this.checked && queryParams.filters.indexOf(this.value) < 0) {
                     queryParams.filters.push(this.value);
@@ -169,9 +174,8 @@ function formatBytes(bytes, decimals = 2) {
                     queryParams.filters.splice(queryParams.filters.indexOf(this.value), 1);
                 }
                 refreshSearch(queryParams);
-                event.preventDefault();
             });
-        };
+        });
 
         function initialisePage(queryParams) {
             var queryTerms = getQueryVariable('q');
