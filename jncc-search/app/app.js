@@ -83,7 +83,13 @@ exports.lambdaHandler = async (event, context) => {
         var cookiePolicyAccepted = isCookiePolicyAccepted(event)
         
         // populate the template
-        ejs.renderFile('index.ejs', {queryParams: queryParams, hits: hits, aggs: aggs, cookiePolicyAccepted: cookiePolicyAccepted}, (err, html) => {
+        ejs.renderFile('index.ejs', {
+            queryParams: queryParams,
+            hits: hits,
+            aggs: aggs,
+            cookiePolicyAccepted: cookiePolicyAccepted,
+            env: env.ENV
+        }, (err, html) => {
             if (err) {
                 console.error(`HTML template rendering failed with error ${err}`)
                 throw new Error()
