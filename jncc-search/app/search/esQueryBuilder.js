@@ -26,6 +26,10 @@ function buildEsPageQuery(queryParams) {
         )
         .from(getPageStartIndex(queryParams.page, queryParams.pageSize))
         .size(queryParams.pageSize)
+        .source({
+            'includes': [ '*' ],
+            'excludes': [ 'content' ]
+        })
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
@@ -61,6 +65,10 @@ function buildEsResourceQuery(queryParams) {
         ])
         .from(getPageStartIndex(queryParams.page, queryParams.pageSize))
         .size(queryParams.pageSize)
+        .source({
+            'includes': [ '*' ],
+            'excludes': [ 'content' ]
+        })
         .highlight(esb.highlight()
             .preTags('<b>')
             .postTags('</b>')
@@ -84,8 +92,16 @@ function getPageStartIndex(page, pageSize) {
 function getSearchTermQueries(queryTerms) {
     var termQueries = []
     queryTerms.forEach(term => {
-        termQueries.push(esb.termQuery('title', term))
-        termQueries.push(esb.termQuery('content', term))
+        termQueries.push(
+            esb.commonTermsQuery('title', term)
+                .cutoffFrequency(0.001)
+                .lowFreqOperator("or")
+        )
+        termQueries.push(
+            esb.commonTermsQuery('content', term)
+                .cutoffFrequency(0.001)
+                .lowFreqOperator("or")
+        )
     })
 
     return termQueries

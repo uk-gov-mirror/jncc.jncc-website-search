@@ -152,7 +152,7 @@ function formatBytes(bytes, decimals = 2) {
             $('#main-search-form').on('submit', function(e){
                 e.preventDefault(); // don't let it actually submit
                 e.returnValue = false;
-                queryParams.queryTerms = $('#search-input').val().split(' ');
+                queryParams.queryTerms = $('#search-input').val().trim().split(' ');
                 queryParams.page = 0;
                 queryParams.filters = [];
                 refreshSearch(queryParams);
@@ -181,7 +181,8 @@ function formatBytes(bytes, decimals = 2) {
             var queryTerms = getQueryVariable('q');
             if (queryTerms) {
                 queryParams.queryTerms = queryTerms.split('+');
-                $('#search-input').val(queryParams.queryTerms.join(' '));
+                var searchInputValue = decodeURIComponent(queryParams.queryTerms.join(' '));
+                $('#search-input').val(searchInputValue);
             }
 
             var view = getQueryVariable('v');
@@ -435,11 +436,11 @@ function formatBytes(bytes, decimals = 2) {
                     <aside id="sidebar">
                         <h2>Sort</h2>
                         <select id="sort-select" class="sort-select" name="s" form="main-search-form">
-                            <option value="relevance">Relevance</option>
-                            <option value="title_asc">Title ascending</option>
-                            <option value="title_desc">Title descending</option>
-                            <option value="date_asc">Date ascending</option>
-                            <option value="date_desc">Date descending</option>
+                            <option value="relevance">Best match</option>
+                            <option value="title_asc">Title: A-Z</option>
+                            <option value="title_desc">Title: Z-A</option>
+                            <option value="date_asc">Published date: Oldest first</option>
+                            <option value="date_desc">Published date: Newest first</option>
                         </select>
                         <% if (aggs && hits && hits.total > 0) { %>
                             <hr />
@@ -481,14 +482,14 @@ function formatBytes(bytes, decimals = 2) {
                         </ul>
                         <br />
                         <% if (hits && queryParams.view !== 'resources') { %>
-                            <p>Pages: <%= hits.total %> results
+                            <p><%= hits.total %> page results
                             <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
                                 for '<%= queryParams.queryTerms.join(' ') %>'
                             <% } %>
                             </p>
                             <% hits.hits.forEach(result => { %>
                                 <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
-                                <span class="results-detail"><b>Published date</b>: <%= result._source.published_date %></span>
+                                <span class="results-detail"><b>Published date</b> <%= result._source.published_date %></span>
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content.join(" ... ") %></p>
                                 <% } else { %>
@@ -497,16 +498,18 @@ function formatBytes(bytes, decimals = 2) {
                                 <hr />
                             <% }) %>
                         <% } else if (hits) { %>
-                            <p>Resources: <%= hits.total %> results
+                            <p><%= hits.total %> resource results
                             <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
                                 for '<%= queryParams.queryTerms.join(' ') %>'
                             <% } %>
                             </p>
                             <% hits.hits.forEach(result => { %>
-                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
-                                <span class="results-detail"><b>Published date</b>: <%= result._source.published_date %></span>
-                                <span class="results-detail"><b>Size</b>: <%= formatBytes(result._source.file_bytes) %></span>
-                                <span class="results-detail"><b>File type</b>: <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
+                                <h4><a href="<%- result._source.url %>"><%- result._source.title %></a></h4>
+                                <span class="results-detail"><b>Published date</b> <%= result._source.published_date %></span>
+                                <% if (result._source.file_bytes > 0) { %> 
+                                <span class="results-detail"><b>Size</b> <%= formatBytes(result._source.file_bytes) %></span>
+                                <% } %> 
+                                <span class="results-detail"><b>File type</b> <%= result._source.file_extension ? result._source.file_extension : "Other" %></span> 
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content %></p>
                                 <% } else { %>
@@ -515,7 +518,7 @@ function formatBytes(bytes, decimals = 2) {
                                 <hr />
                             <% }) %>
                         <% } else { %>
-                            <p>Oops something went wrong</p>
+                            <p>Oops something went wrong, no results found.</p>
                         <% } %>
                         <% if (hits && hits.total > 0) { %> 
                             <nav aria-label="Pagination" class="results-pager">
@@ -654,7 +657,7 @@ function formatBytes(bytes, decimals = 2) {
         </div>
     </script>
     <% } %>
-    
+
     <% if (env === 'live') { %>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8GHZ8D"
