@@ -89,7 +89,7 @@ function formatBytes(bytes, decimals = 2) {
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JNCC Search</title>
+    <title>Search | JNCC</title>
     <link rel="stylesheet" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/css/app.css">
     <link rel="shortcut icon" href="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
@@ -99,6 +99,29 @@ function formatBytes(bytes, decimals = 2) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.0/js/foundation.min.js" defer></script>
     <script src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/js/app.js" defer></script>
     <style>
+        .search-bar form {
+            background-color: white;
+            max-width: none;
+            position: static;
+        }
+
+        .search-bar input {
+            height: 3.125rem;
+            background: transparent;
+            padding-right: 1.1875rem;
+            padding-left: 1.1875rem;
+            max-width: none;
+            border-right: 0;
+            margin: 0;
+        }
+
+        .search-bar button.input-group-button {
+            background-color: #276927;
+            color: white;
+            padding: .75rem;
+            width: 6rem;
+        }
+
         .results-detail {
             margin-right: 0.5rem;
         }
@@ -122,9 +145,9 @@ function formatBytes(bytes, decimals = 2) {
         }
         #results-tabs.tabs > .tabs-title.is-active {
             /* use a box shadow instead of a border to keep the size of the div the same */
-            -webkit-box-shadow:inset 0px -3px 0px 0px #777;
-            -moz-box-shadow:inset 0px -3px 0px 0px #777;
-            box-shadow:inset 0px -3px 0px 0px #777;
+            -webkit-box-shadow:inset 0px -3px 0px 0px #276927;
+            -moz-box-shadow:inset 0px -3px 0px 0px #276927;
+            box-shadow:inset 0px -3px 0px 0px #276927;
         }
         #results-tabs.tabs > .tabs-title > a {
             color: #666262;
@@ -134,6 +157,12 @@ function formatBytes(bytes, decimals = 2) {
             outline: none; /* remove blue highlight when selected */
             margin-bottom: 3px;
             text-decoration: none;
+        }
+        #results-tabs.tabs > .tabs-title.is-active > a {
+            color: #276927;
+        }
+        #results-tabs.tabs > .tabs-title > a:hover {
+            background-color: #f2f2f2;
         }
     </style>
     <script>
@@ -416,20 +445,22 @@ function formatBytes(bytes, decimals = 2) {
 			</nav>
         </header>
 
-        <p class="container show-for-small-only" style="margin-bottom: 1.5rem;">
-            <i class="fas fa-database fa-fw"></i> JNCC Search
-        </p>
-                
         <main id="main">
             <br />
             <div class="container">
                 <h1>Search</h1>
                 <p></p>
-                <form id="main-search-form" role="search" class="search-form input-group" style="position: static; max-width: 100%;">
-                    <label for="search-input" class="show-for-sr">Search</label>
-                    <input id="search-input" type="search" placeholder="Search" class="input-group-field" aria-label="Search" name="q" form="main-search-form">
-                    <button class="input-group-button" aria-label="main-search-button"><i class="icon-search"></i></button>
-                </form>
+                <div class="grid-x grid-margin-x">
+                    <div class="cell large-8 large-offset-2">
+                        <div class="search-bar">
+                            <form id="main-search-form" role="search" class="search-form input-group">
+                                <label for="search-input" class="show-for-sr">Search</label>
+                                <input id="search-input" type="text" placeholder="Search" aria-label="Search" name="q" form="main-search-form" autofocus>
+                                <button class="input-group-button" aria-label="main-search-button">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <br class="hide-for-small-only" />
                 <br class="hide-for-small-only" />
                 <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
@@ -488,7 +519,7 @@ function formatBytes(bytes, decimals = 2) {
                             <% } %>
                             </p>
                             <% hits.hits.forEach(result => { %>
-                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
+                                <h4><a href="<%- result._source.url %>"><%- result._source.title %></a></h4>
                                 <span class="results-detail"><b>Published date</b> <%= result._source.published_date %></span>
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content.join(" ... ") %></p>
