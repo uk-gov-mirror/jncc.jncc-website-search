@@ -112,14 +112,12 @@ function formatBytes(bytes, decimals = 2) {
             padding-left: 1.1875rem;
             max-width: none;
             border-right: 0;
-            margin: 0;
+            margin-bottom: 0;
         }
 
         .search-bar button.input-group-button {
             background-color: #276927;
             color: white;
-            padding: .75rem;
-            width: 6rem;
         }
 
         .results-detail {
@@ -454,9 +452,8 @@ function formatBytes(bytes, decimals = 2) {
                     <div class="cell large-8 large-offset-2">
                         <div class="search-bar">
                             <form id="main-search-form" role="search" class="search-form input-group">
-                                <label for="search-input" class="show-for-sr">Search</label>
-                                <input id="search-input" type="text" placeholder="Search" aria-label="Search" name="q" form="main-search-form" autofocus>
-                                <button class="input-group-button" aria-label="main-search-button">Search</button>
+                                <input id="search-input" type="text" placeholder="Search the JNCC website" aria-label="Search" name="q" form="main-search-form" autofocus>
+                                <button class="input-group-button" aria-label="main-search-button"><i class="icon-search"></i></button>
                             </form>
                         </div>
                     </div>
