@@ -86,6 +86,16 @@ function formatBytes(bytes, decimals = 2) {
 <!doctype html>
 <html lang="en">
 <head>
+    <% if (env === 'live') { %>
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-W8GHZ8D');</script>
+        <!-- End Google Tag Manager --><meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
+    <% } %> 
+
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -292,16 +302,6 @@ function formatBytes(bytes, decimals = 2) {
             return(false);
         }
     </script>
-
-    <% if (env === 'live') { %>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W8GHZ8D');</script>
-    <!-- End Google Tag Manager --><meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
-    <% } %> 
 </head>
 <body>
     <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
@@ -311,7 +311,7 @@ function formatBytes(bytes, decimals = 2) {
         <header id="header">
             <div class="container">
                 <strong class="logo">
-                    <a href="#" accesskey="1"><img src="https://jncc.gov.uk/images/logo.png" alt="JNCC"></a>
+                    <a href="https://jncc.gov.uk" accesskey="1"><img src="https://jncc-website-artefacts.s3-eu-west-1.amazonaws.com/microsite-css/frontend/images/logo.png" alt="JNCC"></a>
                 </strong>
                 <form role="search" class="top-bar search-form input-group" id="search-form" novalidate="novalidate" data-animate="hinge-in-from-top spin-out">
                     <label for="search-field" class="show-for-sr" accesskey="4">Search:</label>
