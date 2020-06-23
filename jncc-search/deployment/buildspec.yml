@@ -5,6 +5,10 @@ phases:
     commands:
       - cd jncc-search
       - sam build
+      # Copy deployment spec files into the output artifact so we dont have
+      # multiple artifacts going into the final stage
+      - mkdir .aws-sam/build/JnccSearchFunction/deployment
+      - cp deployment/*.yml .aws-sam/build/JnccSearchFunction/deployment
 artifacts:
   files:
     - '**/*'

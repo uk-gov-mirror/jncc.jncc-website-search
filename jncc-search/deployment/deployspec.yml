@@ -3,9 +3,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - cd jncc-search
-      - sam build
-artifacts:
-  files:
-    - '**/*'
-  base-directory: jncc-search/.aws-sam/build/JnccSearchFunction
+      - zip -r updated_code.zip . -x ./deployment/*
+      - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://updated-code.zip
+      - cd $AWS_CODEPIPELINE_SRC_StaticSrc
+      - aws s3 sync . s3://$S3_STATIC_BUCKET/$S3_STATIC_PATH --delete
