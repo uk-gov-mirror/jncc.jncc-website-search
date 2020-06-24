@@ -3,7 +3,6 @@ version: 0.2
 phases:
   build:
     commands:
-      - zip -r updated_code.zip . -x ./deployment/*
-      - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://updated-code.zip
-      - cd $AWS_CODEPIPELINE_SRC_StaticSrc
+      - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file s3://$CODEBUILD_SOURCE_REPO_URL_BuildOut
+      - cd $CODEBUILD_SRC_DIR_StaticSrc
       - aws s3 sync . s3://$S3_STATIC_BUCKET/$S3_STATIC_PATH/ --delete --include "frontend/*"
