@@ -7,4 +7,4 @@ phases:
       - aws s3 cp s3://$BUILT_PATH built.zip
       - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://built.zip
       - cd $CODEBUILD_SRC_DIR_StaticSrc
-      - aws s3 sync . s3://$S3_STATIC_BUCKET/$S3_STATIC_PATH/ --delete --include "frontend/*"
+      - aws s3 sync . s3://$S3_STATIC_BUCKET/$S3_STATIC_PATH/ --delete --exclude "*" --include "frontend/*"
