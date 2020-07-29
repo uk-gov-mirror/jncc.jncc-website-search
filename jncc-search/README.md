@@ -17,16 +17,23 @@ Embedded Javascript templates (EJS) is used for the HTML templating. The jncc-se
 * Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
 
 ## Use the SAM CLI to build and test locally
+Setup and activate a python venv to run aws sam
+  
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -r requirements.txt
+
+Create a .env file
 
 Build your application with the `sam build` command. This will create a deployment package and save it in `.aws-sam/build`
 
   sam build
 
-Run the API locally to initiate requests to the lambda via the browser. Note that you'll need to restart this if your credentials change.
+Run the API gateway locally to initiate requests to the lambda via the browser. Note that you'll need to restart this if your credentials change.
 
-  sam local start-api
+  sam local start-api --static-dir <path to public dir>
 
-The site should then be accessible via http://localhost:3000/. You'll need to do a `sam build` everytime you make a change as there's currently no --watch flag. 
+The gateway should then be accessible via http://localhost:3000/ with the static assets served up alongside it. You'll need to do a `sam build` everytime you make a change as there's currently no --watch flag. 
 
 ## Manual deployment to AWS
 

@@ -129,4 +129,5 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/osx,node,linux,windows
 
 .aws-sam/build
+.venv
 *.zip

@@ -79,15 +79,12 @@ exports.lambdaHandler = async (event, context) => {
                 console.error(`Resource search query failed with error ${JSON.stringify(err)}`)
             }
         )
-
-        var cookiePolicyAccepted = isCookiePolicyAccepted(event)
         
         // populate the template
         ejs.renderFile('index.ejs', {
             queryParams: queryParams,
             hits: hits,
             aggs: aggs,
-            cookiePolicyAccepted: cookiePolicyAccepted,
             env: env.ENV
         }, (err, html) => {
             if (err) {
@@ -109,17 +106,4 @@ exports.lambdaHandler = async (event, context) => {
     response.body = htmlBody
 
     return response
-}
-
-function isCookiePolicyAccepted(event) {
-    var accepted = false
-
-    // shoddy workaround for different payload formats
-    if (event.headers && event.headers.Cookie) {
-        accepted = event.headers.Cookie.includes('cookiePolicyAcceptance=true')
-    } else if (event.cookies) {
-        accepted = event.cookies.includes('cookiePolicyAcceptance=true')
-    }
-
-    return accepted
 }
