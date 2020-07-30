@@ -211,32 +211,6 @@ function formatBytes(bytes, decimals = 2) {
                 }
                 refreshSearch(queryParams);
             });
-
-            // Cookie policy acceptance
-            var cookiePolicyAccepted = false;
-            if (document.cookie){
-                var cookiePolicyAccepted = document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith('cookiePolicyAcceptance'))
-                    .split('=')[1] === "true" ? true : false;
-            }
-            
-            var cookieBanner = $('[data-cookie-banner-container]');
-            if (!cookiePolicyAccepted && cookieBanner.children().length == 0) {
-                $('[data-cookie-banner-container]').prepend(`
-                <div class="row expanded cookie-policy" data-closable>
-            <div class="container row">
-                <div class="cookie-banner-text columns small-12 medium-9 large-9">
-                    We use cookies to track usage of our site. Details of these can be found on our <a href="https://jncc.gov.uk/about-jncc/corporate-information/cookie-policy/" title="Cookie policy">Cookie Policy</a>. You may choose to <button class="buttonLink" onclick="CookieDisagreement()">decline all tracking cookies</button>, but if you do some key features may not work as expected.
-                </div>
-                <div class="columns small-12 medium-3 large-3">
-                    <p class="cookie-button-container">
-                        <button class="cookie-button" onclick="CookieAgreement()" id="Agree">Agree &amp; Close</button>
-                    </p>
-                </div>
-            </div>
-        </div>`);
-            }
         });
 
         function initialisePage(queryParams) {

@@ -203,28 +203,49 @@ function initAjaxFiltering() {
 
 // Cookie Policy Banner
 (function ($) {
-    var $cookieBannerContainer = $('[data-cookie-banner-container]');
+    var displayBanner = false;
+    var cookiePolicyValue = checkCookie('cookiePolicyAcceptance');
+    if (cookiePolicyValue) {
+        displayBanner = cookiePolicyValue !== 'true' && cookiePolicyValue !== 'false';
+    } else {
+        displayBanner = true;
+    }
 
-    var $bannerTemplate = $("#cookie-banner-template");
+    if (displayBanner) {
+        var $cookieBannerContainer = $('[data-cookie-banner-container]');
+        displayCookieBanner($cookieBannerContainer);
+    }
 
-    displayCookieBanner($cookieBannerContainer, $bannerTemplate);
-
-    function displayCookieBanner($container, $bannerTemplate) {
-        var htmlContent = $bannerTemplate.text();
+    function displayCookieBanner($container) {
+        var htmlContent = `
+        <div class="row expanded cookie-policy" data-closable>
+    <div class="container row">
+        <div class="cookie-banner-text columns small-12 medium-9 large-9">
+            We use cookies to track usage of our site. Details of these can be found on our <a href="https://jncc.gov.uk/about-jncc/corporate-information/cookie-policy/" title="Cookie policy">Cookie Policy</a>. You may choose to <button class="buttonLink" onclick="CookieDisagreement()">decline all tracking cookies</button>, but if you do some key features may not work as expected.
+        </div>
+        <div class="columns small-12 medium-3 large-3">
+            <p class="cookie-button-container">
+                <button class="cookie-button" onclick="CookieAgreement()" id="Agree">Agree &amp; Close</button>
+            </p>
+        </div>
+    </div>
+</div>`;
         $container.prepend(htmlContent);
     }
 
 })($);
 
-
-function getDataAttributeValueOrDefault($element, key, defaultValue, invalidator) {
-    var dataAttribute = $element.data(key);
-
-    return dataAttribute;
+function checkCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
 }
-function eraseCookie(name) {
-    createCookie(name, "", -1);
-}
+
 function createCookie(name, value, days) {
 
     if (days) {
@@ -246,22 +267,9 @@ function createCookie(name, value, days) {
     }
 }
 
-function checkCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
 function CookieAgreement() {
     console.log("Cookies Agreed");
     var $cookieBannerContainer = $('[data-cookie-banner-container]');
-
-    var $bannerTemplate = $("#cookie-banner-template");
 
     var cookieDuration = 14;
     var cookieName = "cookiePolicyAcceptance";
@@ -274,8 +282,6 @@ function CookieAgreement() {
 function CookieDisagreement() {
     console.log("Cookies Disagreed");
     var $cookieBannerContainer = $('[data-cookie-banner-container]');
-
-    var $bannerTemplate = $("#cookie-banner-template");
 
     var cookieDuration = 14;
     var cookieName = "cookiePolicyAcceptance";
