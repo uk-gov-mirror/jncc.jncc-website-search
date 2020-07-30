@@ -17,55 +17,11 @@
     <link rel="stylesheet" href="/assets/frontend/css/app.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta class="foundation-mq">
-    <style>
-        .sticky-cookie {
-            background-color: #2d7a29;
-            color: #fff;
-            z-index: 505;
-        }
-
-        .cookie-button-container {
-            padding-top: 20px !important;
-        }
-
-        .sticky-cookie {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            font-size: 16px;
-        }
-
-        .sticky-cookie a {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        .sticky-cookie .buttonLink {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        .cookie-banner-text {
-            padding-top: 20px !important;
-        }
-
-        .cookie-button {
-            border: 3px solid #fff;
-            color: #fff;
-            border-radius: 0;
-            padding: 10px;
-            margin-bottom: 0 !important;
-        }
-
-        .cookie-button :hover {
-            text-decoration: underline;
-        }
-    </style>
 
     <script>
     // Cookie Policy Banner
-    (function ($) {
+    jQuery(document).ready(function(){
+        console.log("Doing something");
         var displayBanner = false;
         var cookiePolicyValue = checkCookie('cookiePolicyAcceptance');
         if (cookiePolicyValue) {
@@ -73,13 +29,14 @@
         } else {
             displayBanner = true;
         }
-
+        
         if (displayBanner) {
             var $cookieBannerContainer = $('[data-cookie-banner-container]');
             displayCookieBanner($cookieBannerContainer);
         }
 
         function displayCookieBanner($container) {
+            console.log("displaying cookie banner");
             var htmlContent = `
             <div class="row expanded cookie-policy" data-closable>
         <div class="container row">
@@ -94,9 +51,9 @@
         </div>
     </div>`;
             $container.prepend(htmlContent);
-        }
+        };
 
-    })($);
+    });
 
     function checkCookie(name) {
         var nameEQ = name + "=";
