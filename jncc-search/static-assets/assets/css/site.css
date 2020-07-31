@@ -1,0 +1,63 @@
+.search-bar form {
+    background-color: white;
+    max-width: none;
+    position: static;
+}
+
+.search-bar input {
+    height: 3.125rem;
+    background: transparent;
+    padding-right: 1.1875rem;
+    padding-left: 1.1875rem;
+    max-width: none;
+    border-right: 0;
+    margin-bottom: 0;
+}
+
+.search-bar button.input-group-button {
+    background-color: #276927;
+    color: white;
+}
+
+.results-detail {
+    margin-right: 0.5rem;
+}
+
+.results-pager {
+    text-align: center;
+}
+.pagination > li {
+    font-size: 1.1875rem;
+}
+.pagination > li.current > a {
+    color: white;
+}
+.pagination > li.current > a:hover {
+    background-color: rgb(45, 122, 41);
+}
+
+#results-tabs.tabs {
+    border: none;
+    margin-bottom: 0.5rem;
+}
+#results-tabs.tabs > .tabs-title.is-active {
+    /* use a box shadow instead of a border to keep the size of the div the same */
+    -webkit-box-shadow:inset 0px -3px 0px 0px #276927;
+    -moz-box-shadow:inset 0px -3px 0px 0px #276927;
+    box-shadow:inset 0px -3px 0px 0px #276927;
+}
+#results-tabs.tabs > .tabs-title > a {
+    color: #666262;
+    background-color: white;
+    font-size: 95%;
+    /* padding: 1rem 1.5rem; */
+    outline: none; /* remove blue highlight when selected */
+    margin-bottom: 3px;
+    text-decoration: none;
+}
+#results-tabs.tabs > .tabs-title.is-active > a {
+    color: #276927;
+}
+#results-tabs.tabs > .tabs-title > a:hover {
+    background-color: #f2f2f2;
+}
