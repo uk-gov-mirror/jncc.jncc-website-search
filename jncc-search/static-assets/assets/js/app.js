@@ -1,4 +1,4 @@
-(function($) {
+jQuery(document).ready(function() {
     var queryParams = {
         queryTerms: [],
         view: 'pages',
@@ -6,7 +6,7 @@
         page: 0,
         filters: []
     }
-    
+
     initialisePage(queryParams);
 
     $('#main-search-form').on('submit', function(e){
@@ -35,7 +35,7 @@
         }
         refreshSearch(queryParams);
     });
-})(jQuery);
+});
 
 function initialisePage(queryParams) {
     var queryTerms = getQueryVariable('q');
