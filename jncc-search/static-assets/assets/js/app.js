@@ -1,12 +1,12 @@
-var queryParams = {
-    queryTerms: [],
-    view: 'pages',
-    sort: 'relevance',
-    page: 0,
-    filters: []
-}
-
-$(document).ready(function() {
+(function($) {
+    var queryParams = {
+        queryTerms: [],
+        view: 'pages',
+        sort: 'relevance',
+        page: 0,
+        filters: []
+    }
+    
     initialisePage(queryParams);
 
     $('#main-search-form').on('submit', function(e){
@@ -35,7 +35,7 @@ $(document).ready(function() {
         }
         refreshSearch(queryParams);
     });
-})();
+})(jQuery);
 
 function initialisePage(queryParams) {
     var queryTerms = getQueryVariable('q');
