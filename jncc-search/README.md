@@ -23,16 +23,16 @@ Create a .env file using the .env.example template
 
 Setup and activate a python venv to run aws sam
   
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install -r requirements.txt
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
 
 Build your application with the `sam build` command. This will create a deployment package and save it in `.aws-sam/build`
 
-  sam build
+    sam build
 
 Run the API gateway locally to initiate requests to the lambda via the browser. Note that you'll need to restart this if your credentials change.
 
-  sam local start-api --static-dir <path to static-assets dir>
+    sam local start-api --static-dir <path to static-assets dir>
 
 The site should then be accessible via http://localhost:3000/. You'll need to do a `sam build` every time you make a change as there's currently no --watch flag.
