@@ -84,7 +84,7 @@ function formatBytes(bytes, decimals = 2) {
 }
 %>
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <% if (env === 'live') { %>
         <!-- Google Tag Manager -->
@@ -265,7 +265,7 @@ function formatBytes(bytes, decimals = 2) {
                 <br class="hide-for-small-only" />
                 <div class="two-columns stretch-layout staff-directory columns-reverse-layout">
                     <aside id="sidebar">
-                        <h2>Sort</h2>
+                        <label for="sort-select"><h2>Sort</h2></label>
                         <select id="sort-select" class="sort-select" name="s" form="main-search-form">
                             <option value="relevance">Best match</option>
                             <option value="title_asc">Title: A-Z</option>
@@ -319,7 +319,7 @@ function formatBytes(bytes, decimals = 2) {
                             <% } %>
                             </p>
                             <% hits.hits.forEach(result => { %>
-                                <h4><a href="<%- result._source.url %>"><%- result._source.title %></a></h4>
+                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
                                 <span class="results-detail"><b>Published date</b> <%= result._source.published_date %></span>
                                 <% if (result.highlight && result.highlight.content) { %>
                                 <p><%- result.highlight.content.join(" ... ") %></p>
@@ -335,7 +335,7 @@ function formatBytes(bytes, decimals = 2) {
                             <% } %>
                             </p>
                             <% hits.hits.forEach(result => { %>
-                                <h4><a href="<%- result._source.url %>"><%- result._source.title %></a></h4>
+                                <h3><a href="<%- result._source.url %>"><%- result._source.title %></a></h3>
                                 <span class="results-detail"><b>Published date</b> <%= result._source.published_date %></span>
                                 <% if (result._source.file_bytes > 0) { %> 
                                 <span class="results-detail"><b>Size</b> <%= formatBytes(result._source.file_bytes) %></span>

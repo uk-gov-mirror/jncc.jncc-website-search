@@ -1,3 +1,8 @@
+
+.search-bar input::placeholder {
+    color: black;
+}
+
 .search-bar form {
     background-color: white;
     max-width: none;
@@ -11,12 +16,25 @@
     padding-left: 1.1875rem;
     max-width: none;
     border-right: 0;
+    border-color: #666262;
     margin-bottom: 0;
+}
+
+.search-form input::placeholder {
+	color: #666262;
+}
+
+select {
+    border-color: #444444;
 }
 
 .search-bar button.input-group-button {
     background-color: #276927;
     color: white;
+}
+
+.staff-checkbox-form .fake-input {
+    border-color: #444444;
 }
 
 .results-detail {
@@ -26,14 +44,21 @@
 .results-pager {
     text-align: center;
 }
+
 .pagination > li {
     font-size: 1.1875rem;
+}
+.pagination > li > a {
+    color: #276923;
 }
 .pagination > li.current > a {
     color: white;
 }
 .pagination > li.current > a:hover {
     background-color: rgb(45, 122, 41);
+}
+.pagination > .disabled {
+    color: grey;
 }
 
 #results-tabs.tabs {
@@ -60,4 +85,13 @@
 }
 #results-tabs.tabs > .tabs-title > a:hover {
     background-color: #f2f2f2;
+}
+
+a {
+    outline: none;
+    box-shadow: none;
+}
+a:focus {
+    box-shadow: none;
+    border: 2px solid black;
 }
