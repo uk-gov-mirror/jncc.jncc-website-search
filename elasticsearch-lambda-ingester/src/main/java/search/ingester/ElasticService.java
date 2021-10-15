@@ -45,7 +45,7 @@ public class ElasticService {
             String awsServiceName = "es";
             AWS4Signer signer = new AWS4Signer();
             signer.setServiceName(awsServiceName);
-            signer.setRegionName(env.AWS_REGION());
+            signer.setRegionName(env.ES_REGION());
             HttpRequestInterceptor interceptor =
                     new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new DefaultAWSCredentialsProviderChain());
             client = new RestHighLevelClient(
