@@ -6,7 +6,7 @@
 
     <groupId>org.jncc</groupId>
     <artifactId>elasticsearch-lambda-ingester</artifactId>
-    <version>0.13.0</version>
+    <version>0.13.3</version>
 
     <repositories>
         <!-- Hack to build aws request signing interceptor into project as not in central maven -->
@@ -36,6 +36,11 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.11.487</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sts</artifactId>
             <version>1.11.487</version>
         </dependency>
         <dependency>

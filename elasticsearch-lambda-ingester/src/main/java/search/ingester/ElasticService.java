@@ -4,8 +4,15 @@ import java.io.IOException;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import com.amazonaws.auth.AWS4Signer;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.http.AWSRequestSigningApacheInterceptor;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
+import com.amazonaws.services.securitytoken.model.Credentials;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.index.IndexRequest;
@@ -42,12 +49,30 @@ public class ElasticService {
         RestHighLevelClient client = ElasticService.esClient;
 
         if (client == null) {
+            // assume role for cross account functionality
+            AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                .withCredentials(new DefaultAWSCredentialsProviderChain())
+                .withRegion(env.AWS_REGION())
+                .build();
+
+            AssumeRoleRequest roleRequest = new AssumeRoleRequest()
+                .withRoleArn(env.ES_ROLE_ARN())
+                .withRoleSessionName("opensearch-beta-role-session");
+
+            AssumeRoleResult roleResponse = stsClient.assumeRole(roleRequest);
+            Credentials sessionCredentials = roleResponse.getCredentials();
+
+            BasicSessionCredentials awsCredentials = new BasicSessionCredentials(
+                sessionCredentials.getAccessKeyId(),
+                sessionCredentials.getSecretAccessKey(),
+                sessionCredentials.getSessionToken());
+
             String awsServiceName = "es";
             AWS4Signer signer = new AWS4Signer();
             signer.setServiceName(awsServiceName);
             signer.setRegionName(env.ES_REGION());
             HttpRequestInterceptor interceptor =
-                    new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new DefaultAWSCredentialsProviderChain());
+                    new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new AWSStaticCredentialsProvider(awsCredentials));
             client = new RestHighLevelClient(
                     RestClient.builder(HttpHost.create(env.ES_ENDPOINT()))
                             .setHttpClientConfigCallback(callback -> callback.addInterceptorLast(interceptor)));
