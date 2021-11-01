@@ -7,6 +7,7 @@ import com.amazonaws.auth.AWS4Signer;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.http.AWSRequestSigningApacheInterceptor;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
@@ -24,9 +25,6 @@ import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import search.ingester.models.Document;
 
 public class ElasticService {
@@ -49,10 +47,10 @@ public class ElasticService {
         RestHighLevelClient client = ElasticService.esClient;
 
         if (client == null) {
-            // assume role for cross account functionality
+            // assume role through STS VPC endpoint
             AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
                 .withCredentials(new DefaultAWSCredentialsProviderChain())
-                .withRegion(env.AWS_REGION())
+                .withEndpointConfiguration(new EndpointConfiguration(env.VPC_STS_ENDPOINT(), env.AWS_REGION()))
                 .build();
 
             AssumeRoleRequest roleRequest = new AssumeRoleRequest()
