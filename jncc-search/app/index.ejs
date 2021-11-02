@@ -1,7 +1,7 @@
 <%
 var maxConsecutivePages = 8
 var visiblePagesBeforeOrAfterCurrentPage = 3
-var totalPages = hits ? Math.ceil(hits.total/queryParams.pageSize) : 1
+var totalPages = hits ? Math.ceil(hits.total.value/queryParams.pageSize) : 1
 
 function isCookiePolicyAccepted() {
     return false
@@ -273,7 +273,7 @@ function formatBytes(bytes, decimals = 2) {
                             <option value="date_asc">Published date: Oldest first</option>
                             <option value="date_desc">Published date: Newest first</option>
                         </select>
-                        <% if (aggs && hits && hits.total > 0) { %>
+                        <% if (aggs && hits && hits.total.value > 0) { %>
                             <hr />
                             <form id="filter-form" class="staff-checkbox-form">
                                 <h2>Filter</h2>
@@ -313,7 +313,7 @@ function formatBytes(bytes, decimals = 2) {
                         </ul>
                         <br />
                         <% if (hits && queryParams.view !== 'resources') { %>
-                            <p><%= hits.total %> page results
+                            <p><%= hits.total.value %> page results
                             <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
                                 for '<%= queryParams.queryTerms.join(' ') %>'
                             <% } %>
@@ -329,7 +329,7 @@ function formatBytes(bytes, decimals = 2) {
                                 <hr />
                             <% }) %>
                         <% } else if (hits) { %>
-                            <p><%= hits.total %> resource results
+                            <p><%= hits.total.value %> resource results
                             <% if (queryParams.queryTerms && queryParams.queryTerms.length > 0) { %>
                                 for '<%= queryParams.queryTerms.join(' ') %>'
                             <% } %>
@@ -351,7 +351,7 @@ function formatBytes(bytes, decimals = 2) {
                         <% } else { %>
                             <p>Oops something went wrong, no results found.</p>
                         <% } %>
-                        <% if (hits && hits.total > 0) { %> 
+                        <% if (hits && hits.total.value > 0) { %> 
                             <nav aria-label="Pagination" class="results-pager">
                                 <ul class="pagination">
                                     <% if (queryParams.page === 1) { %>

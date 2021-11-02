@@ -38,6 +38,7 @@ function buildEsPageQuery(queryParams) {
             .scoreOrder('_score')
         )
         .sort(getSortQuery(queryParams.sort))
+        // todo: ideally we would also have "track_total_hits": true
 
     return requestBody.toJSON()
 }

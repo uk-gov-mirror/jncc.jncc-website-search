@@ -1,0 +1,25 @@
+{
+  "mappings": {
+    "properties": {
+      "site": { "type": "keyword" },
+      "title": { "type": "text" },
+      "content": { "type": "text", "term_vector": "with_positions_offsets" },
+      "content_truncated": {"type": "keyword", "index": false},
+      "url": { "type": "keyword" },
+      "keywords": {
+        "type": "nested",
+        "properties": {
+          "vocab": { "type": "keyword" },
+          "value": { "type": "keyword" }
+        }
+      },
+      "resource_type": { "type": "keyword" },
+      "published_date": { "type": "date" },
+      "asset_id": { "type": "keyword" },
+      "file_extension": { "type": "keyword" },
+      "file_bytes": { "type": "long", "index": false },
+      "footprint": { "type": "geo_shape" },
+      "timestamp_utc": { "type": "date" }
+    }
+  }
+}
