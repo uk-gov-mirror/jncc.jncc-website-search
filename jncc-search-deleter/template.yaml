@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  jncc-search
+  jncc-search-deleter
 
   SAM Template for local dev
   
@@ -29,11 +29,11 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   JnccSearchApi:
-    Description: "API Gateway endpoint URL for Prod stage for jncc-search function"
+    Description: "API Gateway endpoint URL for Prod stage for jncc-search-deleter function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/"
   JnccSearchFunction:
-    Description: "jncc-search Lambda Function ARN"
-    Value: !GetAtt JnccSearchFunction.Arn
+    Description: "jncc-search-frontend Lambda Function ARN"
+    Value: !GetAtt JnccSearchDeleterFunction.Arn
   JnccSearchFunctionIamRole:
-    Description: "Implicit IAM Role created for jncc-search function"
-    Value: !GetAtt JnccSearchFunctionRole.Arn
+    Description: "Implicit IAM Role created for jncc-search-frontend function"
+    Value: !GetAtt JnccSearchDeleterFunctionRole.Arn

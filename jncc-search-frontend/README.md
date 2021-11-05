@@ -1,4 +1,4 @@
-# jncc-search
+# jncc-search-frontend
 
 The JNCC search page used by the JNCC website, resource hub, and microsites. This repo contains the nodejs lambda code which performs an elasticsearch query and returns an HTML page (to be integrated on AWS with Cloudfront, an API gateway, and S3 for static file hosting).
 
