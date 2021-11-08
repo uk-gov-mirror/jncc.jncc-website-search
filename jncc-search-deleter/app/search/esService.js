@@ -5,7 +5,7 @@ const endpoint = new AWS.Endpoint(env.ES_ENDPOINT)
 const creds = new AWS.EnvironmentCredentials('AWS')
 
 exports.deleteById = async function (id) {
-    console.log(`Sending DELETE request for doc with id=${id}`)
+    console.log(`Sending delete request for doc with id=${id}`)
     var req = new AWS.HttpRequest(endpoint)
             
     req.method = 'DELETE';
@@ -47,7 +47,7 @@ exports.deleteById = async function (id) {
 }
 
 exports.deleteBySite = async function (site) {
-    console.log(`Sending DELETE request for docs with site=${site}`)
+    console.log(`Sending delete request for docs with site=${site}`)
 
     var body = {
         query: {
@@ -58,7 +58,7 @@ exports.deleteBySite = async function (site) {
     }
     var req = new AWS.HttpRequest(endpoint)
             
-    req.method = 'DELETE';
+    req.method = 'POST';
     req.path = `/${env.ES_INDEX}/_delete_by_query`
     req.region = env.ES_REGION
     req.headers['host'] = endpoint.host
