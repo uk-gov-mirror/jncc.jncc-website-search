@@ -3,10 +3,11 @@ const esService = require('search/esService')
 exports.lambdaHandler = async (event) => {
     console.log('Starting jncc-search-deleter lambda')
 
+    var response = null
     if (event.id) {
-        response = esService.deleteById(event.id)
+        response = await esService.deleteById(event.id)
     } else if (event.site) {
-        response = esService.deleteBySite(event.site)
+        response = await esService.deleteBySite(event.site)
     } else {
         throw new Error('No id or site parameter provided')
     }
