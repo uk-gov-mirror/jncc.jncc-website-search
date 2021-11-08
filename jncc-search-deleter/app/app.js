@@ -12,7 +12,7 @@ exports.lambdaHandler = async (event) => {
         throw new Error('No id or site parameter provided')
     }
 
-    console.log(`${JSON.stringify(response)}`)
+    console.log(`${JSON.stringify(response.errorMessage)}`)
 
     if (response && response.statusCode == 200) {
         console.log(`Delete query was successful`)
