@@ -1,0 +1,26 @@
+{
+  "name": "jncc-search-deleter",
+  "version": "0.0.1",
+  "description": "Utility function used by the microsites to delete from Opensearch",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jncc/jncc-website-search.git"
+  },
+  "author": "jncc",
+  "license": "OGL-UK-3.0",
+  "bugs": {
+    "url": "https://github.com/jncc/jncc-website-search/issues"
+  },
+  "homepage": "https://github.com/jncc/jncc-website-search#readme"
+}
