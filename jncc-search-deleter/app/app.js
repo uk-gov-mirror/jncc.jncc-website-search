@@ -5,9 +5,9 @@ exports.lambdaHandler = async (event) => {
 
     var response = null
     if (event.id && event.index) {
-        response = await esService.deleteById(event.id, index)
+        response = await esService.deleteById(event.id, event.index)
     } else if (event.site && event.index) {
-        response = await esService.deleteBySite(event.site, index)
+        response = await esService.deleteBySite(event.site, event.index)
     } else {
         throw new Error('Expecting an id or site, and an index to be provided')
     }
