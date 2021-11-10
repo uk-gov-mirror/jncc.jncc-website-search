@@ -4,12 +4,12 @@ exports.lambdaHandler = async (event) => {
     console.log('Starting jncc-search-deleter lambda')
 
     var response = null
-    if (event.id) {
-        response = await esService.deleteById(event.id)
-    } else if (event.site) {
-        response = await esService.deleteBySite(event.site)
+    if (event.id && event.index) {
+        response = await esService.deleteById(event.id, index)
+    } else if (event.site && event.index) {
+        response = await esService.deleteBySite(event.site, index)
     } else {
-        throw new Error('No id or site parameter provided')
+        throw new Error('Expecting an id or site, and an index to be provided')
     }
 
     console.log(`${JSON.stringify(response.errorMessage)}`)
