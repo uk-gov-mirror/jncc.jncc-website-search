@@ -35,7 +35,7 @@ serverlessrepo==0.1.9
 six==1.15.0
 tomlkit==0.5.8
 tzlocal==2.1
-urllib3==1.25.10
+urllib3==1.26.5
 websocket-client==0.57.0
 Werkzeug==1.0.1
 whichcraft==0.6.1
