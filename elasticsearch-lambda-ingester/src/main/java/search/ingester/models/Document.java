@@ -2,7 +2,7 @@ package search.ingester.models;
 
 import javax.json.bind.annotation.JsonbProperty;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -39,8 +39,8 @@ public class Document {
     @NotBlank
     @JsonbProperty("content_truncated")
     private String contentTruncated;
-
-    @JsonbProperty("resource_type")	
+    
+    @JsonbProperty("resource_type")
     private String resourceType;
 
     @JsonbProperty("file_base64")
@@ -61,8 +61,14 @@ public class Document {
     private String publishedDate;
 
     @Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", message = "ID must be a UUID")
-    @JsonbProperty("asset_id")
-    private String assetId;
+    @JsonbProperty("parent_id")
+    private String parentId;
+
+    @JsonbProperty("parent_title")
+    private String parentTitle;
+
+    @JsonbProperty("parent_resource_type")
+    private String parentResourceType;
 
     @NotBlank
     @JsonbProperty("timestamp_utc")
@@ -104,8 +110,14 @@ public class Document {
     public String getPublishedDate() { return publishedDate; }
     public void setPublishedDate(String publishedDate) { this.publishedDate = publishedDate; }
 
-    public String getAssetId() { return assetId; }
-    public void setAssetId(String assetId) { this.assetId = assetId; }
+    public String getParentId() { return parentId; }
+    public void setParentId(String parentId) { this.parentId = parentId; }
+
+    public String getParentTitle() { return parentTitle; }
+    public void setParentTitle(String parentTitle) { this.parentTitle = parentTitle; }
+
+    public String getParentResourceType() { return parentResourceType; }
+    public void setParentResourceType(String parentResourceType) { this.parentResourceType = parentResourceType; }
 
     public String getTimestampUtc() { return timestampUtc; }
     public void setTimestampUtc(String timestampUtc) { this.timestampUtc = timestampUtc; }

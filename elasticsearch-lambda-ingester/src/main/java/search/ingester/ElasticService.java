@@ -4,16 +4,8 @@ import java.io.IOException;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import com.amazonaws.auth.AWS4Signer;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.http.AWSRequestSigningApacheInterceptor;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
-import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
-import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
-import com.amazonaws.services.securitytoken.model.Credentials;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.index.IndexRequest;
@@ -25,6 +17,9 @@ import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import search.ingester.models.Document;
 
 public class ElasticService {
@@ -47,30 +42,12 @@ public class ElasticService {
         RestHighLevelClient client = ElasticService.esClient;
 
         if (client == null) {
-            // assume role through STS VPC endpoint
-            AWSSecurityTokenService stsClient = AWSSecurityTokenServiceClientBuilder.standard()
-                .withCredentials(new DefaultAWSCredentialsProviderChain())
-                .withEndpointConfiguration(new EndpointConfiguration(env.VPC_STS_ENDPOINT(), env.AWS_REGION()))
-                .build();
-
-            AssumeRoleRequest roleRequest = new AssumeRoleRequest()
-                .withRoleArn(env.ES_ROLE_ARN())
-                .withRoleSessionName("opensearch-beta-role-session");
-
-            AssumeRoleResult roleResponse = stsClient.assumeRole(roleRequest);
-            Credentials sessionCredentials = roleResponse.getCredentials();
-
-            BasicSessionCredentials awsCredentials = new BasicSessionCredentials(
-                sessionCredentials.getAccessKeyId(),
-                sessionCredentials.getSecretAccessKey(),
-                sessionCredentials.getSessionToken());
-
             String awsServiceName = "es";
             AWS4Signer signer = new AWS4Signer();
             signer.setServiceName(awsServiceName);
-            signer.setRegionName(env.ES_REGION());
+            signer.setRegionName(env.AWS_REGION());
             HttpRequestInterceptor interceptor =
-                    new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new AWSStaticCredentialsProvider(awsCredentials));
+                    new AWSRequestSigningApacheInterceptor(awsServiceName, signer, new DefaultAWSCredentialsProviderChain());
             client = new RestHighLevelClient(
                     RestClient.builder(HttpHost.create(env.ES_ENDPOINT()))
                             .setHttpClientConfigCallback(callback -> callback.addInterceptorLast(interceptor)));
@@ -114,4 +91,14 @@ public class ElasticService {
             }
         }
     }    
+
+    public void deleteByParentId(String index, String parentDocId) throws IOException {
+
+        DeleteByQueryRequest req = new DeleteByQueryRequest(index);
+        req.setQuery(QueryBuilders.matchQuery("parent_id", parentDocId));
+
+        BulkByScrollResponse res = ElasticService.getEsClient(env).deleteByQuery(req, RequestOptions.DEFAULT);
+
+        // TODO: Need to check the response of this
+    }
 }
