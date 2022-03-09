@@ -1,7 +1,7 @@
 
 var civicCookieControlConfig = {
     apiKey: 'fc8364648ad258321fa6197d91d72771562de378',
-    product: 'PRO',
+    product: 'PRO_MULTISITE',
     logConsent: true,
     initialState: 'notify',
     notifyDismissButton: false,
