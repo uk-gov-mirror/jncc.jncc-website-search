@@ -1,6 +1,7 @@
 const ejs = require('ejs')
 const esService = require('search/esService')
 const esQueryBuilder = require('search/esQueryBuilder')
+const fs = require('fs')
 
 const env = require('env')
 
@@ -66,19 +67,33 @@ exports.lambdaHandler = async (event, context) => {
         
         var hits = null
         var aggs = null
-        await esService.queryElasticsearch(payload).then(
-            response => {
-                var responseBody = JSON.parse(response.body)
-                hits = responseBody.hits
-                if (responseBody.aggregations) {
-                    aggs = responseBody.aggregations
-                }
-                console.log(`Successfully got response with ${hits.total} results`)
-            },
-            err => {
-                console.error(`Resource search query failed with error ${JSON.stringify(err)}`)
+
+        if (env.ENV == "localdev") { // todo: find a way to mock the OpenSearch endpoint?
+            console.log(`Mocking ES response with example data: ${JSON.stringify(payload)}`)
+            var responseBody = null
+            if (queryParams.view == esQueryBuilder.viewOptions.RESOURCES) {
+                responseBody = JSON.parse(fs.readFileSync('example-data/resources.json'))
+                aggs = responseBody.aggregations
+            } else {
+                responseBody = JSON.parse(fs.readFileSync('example-data/pages.json'))
             }
-        )
+
+            hits = responseBody.hits
+        } else {
+            await esService.queryElasticsearch(payload).then(
+                response => {
+                    var responseBody = JSON.parse(response.body)
+                    hits = responseBody.hits
+                    if (responseBody.aggregations) {
+                        aggs = responseBody.aggregations
+                    }
+                    console.log(`Successfully got response with ${hits.total} results`)
+                },
+                err => {
+                    console.error(`Resource search query failed with error ${JSON.stringify(err)}`)
+                }
+            )
+        }
         
         // populate the template
         ejs.renderFile('index.ejs', {
