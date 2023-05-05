@@ -7,8 +7,10 @@
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W8GHZ8D');</script>
-    <!-- End Google Tag Manager --><meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
+    })(window,document,'script','dataLayer','GTM-PXZ8RMF');</script>
+    <!-- End Google Tag Manager -->
+    
+    <meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
 
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -17,100 +19,6 @@
     <link rel="stylesheet" href="/assets/frontend/css/app.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta class="foundation-mq">
-
-    <script>
-    // Cookie Policy Banner
-    jQuery(document).ready(function(){
-        console.log("Doing something");
-        var displayBanner = false;
-        var cookiePolicyValue = checkCookie('cookiePolicyAcceptance');
-        if (cookiePolicyValue) {
-            displayBanner = cookiePolicyValue !== 'true' && cookiePolicyValue !== 'false';
-        } else {
-            displayBanner = true;
-        }
-        
-        if (displayBanner) {
-            var $cookieBannerContainer = $('[data-cookie-banner-container]');
-            displayCookieBanner($cookieBannerContainer);
-        }
-
-        function displayCookieBanner($container) {
-            console.log("displaying cookie banner");
-            var htmlContent = `
-            <div class="row expanded cookie-policy" data-closable>
-        <div class="container row">
-            <div class="cookie-banner-text columns small-12 medium-9 large-9">
-                We use cookies to track usage of our site. Details of these can be found on our <a href="https://jncc.gov.uk/about-jncc/corporate-information/cookie-policy/" title="Cookie policy">Cookie Policy</a>. You may choose to <button class="buttonLink" onclick="CookieDisagreement()">decline all tracking cookies</button>, but if you do some key features may not work as expected.
-            </div>
-            <div class="columns small-12 medium-3 large-3">
-                <p class="cookie-button-container">
-                    <button class="cookie-button" onclick="CookieAgreement()" id="Agree">Agree &amp; Close</button>
-                </p>
-            </div>
-        </div>
-    </div>`;
-            $container.prepend(htmlContent);
-        };
-
-    });
-
-    function checkCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-
-    function createCookie(name, value, days) {
-
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            var expires = "; expires=" + date.toGMTString();
-            var domain = "jncc.gov.uk";
-            var hasNumber = /\d/;
-
-            if (hasNumber.test(domain)) {
-                document.cookie = name + "=" + value + expires + "; path=/";
-            }
-            else
-            {
-                document.cookie = name + "=" + value + expires + "; domain=." + domain + "; path=/";
-            }
-
-        
-        }
-    }
-
-    function CookieAgreement() {
-        console.log("Cookies Agreed");
-        var $cookieBannerContainer = $('[data-cookie-banner-container]');
-
-        var cookieDuration = 14;
-        var cookieName = "cookiePolicyAcceptance";
-        var cookieValue = "true";
-
-        createCookie(cookieName, cookieValue, cookieDuration);
-        location.reload();
-    }
-
-    function CookieDisagreement() {
-        console.log("Cookies Disagreed");
-        var $cookieBannerContainer = $('[data-cookie-banner-container]');
-
-        var cookieDuration = 14;
-        var cookieName = "cookiePolicyAcceptance";
-        var cookieValue = "false";
-
-        createCookie(cookieName, cookieValue, cookieDuration);
-        location.reload();
-    }
-    </script>
 
 </head>
 <body>
@@ -199,12 +107,9 @@
         </footer>
     </div>
     <a class="accessibility" href="#wrapper">Back to top</a>
-    
-    <!-- Cookie Consent Setup -->
-    <div data-cookie-banner-container class="sticky-cookie"></div>
 
-	<!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8GHZ8D"
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PXZ8RMF"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 </body>
