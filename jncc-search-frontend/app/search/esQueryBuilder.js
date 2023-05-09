@@ -61,8 +61,8 @@ function buildEsResourceQuery(queryParams) {
                 .minimumShouldMatch(1)
         )
         .aggs([
-            esb.termsAggregation('file_types', 'file_extension.keyword'),
-            esb.missingAggregation('other', 'file_extension.keyword')
+            esb.termsAggregation('file_types', 'file_extension'),
+            esb.missingAggregation('other', 'file_extension')
         ])
         .from(getPageStartIndex(queryParams.page, queryParams.pageSize))
         .size(queryParams.pageSize)
@@ -116,7 +116,7 @@ function getFileFilterQueries(filters) {
             queryFilters.push(esb.boolQuery()
                 .mustNot(esb.existsQuery('file_extension')))
         } else {
-            queryFilters.push(esb.termQuery('file_extension.keyword', filter))
+            queryFilters.push(esb.termQuery('file_extension', filter))
         }
     })
 
