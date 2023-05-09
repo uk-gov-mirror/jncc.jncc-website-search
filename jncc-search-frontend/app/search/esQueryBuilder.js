@@ -126,18 +126,18 @@ function getFileFilterQueries(filters) {
 function getSortQuery(sortOption) {
     switch (sortOption) {
         case sortOptions.RELEVANCE:
-            return esb.sort('_score')
+            return new esb.sort('_score')
         case sortOptions.TITLE_ASC:
-            return esb.sort('title.raw', "asc")
+            return new esb.sort('title.raw', "asc")
         case sortOptions.TITLE_DESC:
-            return esb.sort('title.raw', "desc")
+            return new esb.sort('title.raw', "desc")
         case sortOptions.DATE_ASC:
-            return esb.sort('published_date', "asc")
+            return new esb.sort('published_date', "asc")
         case sortOptions.DATE_DESC:
-            return esb.sort('published_date', "desc")
+            return new esb.sort('published_date', "desc")
         default:
             console.warn(`Sort option ${sortOption} was not recognised, query not changed`)
-            return esb.sort('_score')
+            return new esb.sort('_score')
     }
 }
 
