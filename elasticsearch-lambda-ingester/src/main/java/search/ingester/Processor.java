@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import search.ingester.models.Document;
 import search.ingester.models.Message;
@@ -95,7 +95,11 @@ public class Processor {
     
     private void validateDocument(Document doc) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
+        Validator validator = Validation.byDefaultProvider()
+            .configure()
+            .messageInterpolator(new ParameterMessageInterpolator())
+            .buildValidatorFactory()
+            .getValidator();
         Set<ConstraintViolation<Document>> violations = validator.validate(doc);
 
         if (violations.size() > 0) {
