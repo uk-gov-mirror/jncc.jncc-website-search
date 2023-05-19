@@ -94,7 +94,6 @@ public class Processor {
     }
     
     private void validateDocument(Document doc) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = Validation.byDefaultProvider()
             .configure()
             .messageInterpolator(new ParameterMessageInterpolator())
