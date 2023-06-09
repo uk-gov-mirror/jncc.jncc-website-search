@@ -128,9 +128,9 @@ function getSortQuery(sortOption) {
         case sortOptions.RELEVANCE:
             return esb.sort('_score')
         case sortOptions.TITLE_ASC:
-            return esb.sort('title.raw', "asc")
+            return esb.sort('title.keyword', "asc")
         case sortOptions.TITLE_DESC:
-            return esb.sort('title.raw', "desc")
+            return esb.sort('title.keyword', "desc")
         case sortOptions.DATE_ASC:
             return esb.sort('published_date', "asc")
         case sortOptions.DATE_DESC:
