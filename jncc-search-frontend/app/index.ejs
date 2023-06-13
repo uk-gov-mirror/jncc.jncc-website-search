@@ -3,6 +3,10 @@ var maxConsecutivePages = 8
 var visiblePagesBeforeOrAfterCurrentPage = 3
 var totalPages = hits ? Math.ceil(hits.total.value/queryParams.pageSize) : 1
 
+function isCookiePolicyAccepted() {
+    return false
+}
+
 function getPaginationStart(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
         return 1
@@ -468,7 +472,10 @@ function formatBytes(bytes, decimals = 2) {
     </div>
     <a class="accessibility" href="#wrapper">Back to top</a>
 
-    <% if (env === 'live' || env === 'beta') { %>
+    <% if (env === 'live') { %>
+    <!-- Cookie Consent Setup -->
+    <div data-cookie-banner-container class="sticky-cookie"></div>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PXZ8RMF"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
