@@ -1,0 +1,219 @@
+{
+    "took" : 27,
+    "timed_out" : false,
+    "_shards" : {
+      "total" : 5,
+      "successful" : 5,
+      "skipped" : 0,
+      "failed" : 0
+    },
+    "hits" : {
+      "total" : {
+        "value" : 1756,
+        "relation" : "eq"
+      },
+      "max_score" : 1.0,
+      "hits" : [
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11036",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:09.918Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 122929,
+            "id" : "RIS-UK11036",
+            "title" : "Lindisfarne - untitled",
+            "published_date" : "1992-03-11",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11036.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11036 Page 1 of 10 Lindisfarne Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), as ame..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11021",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:19.642Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 136507,
+            "id" : "RIS-UK11021",
+            "title" : "Dorset Heathlands - untitled",
+            "published_date" : "1998-10-01",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11021.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11021 Page 1 of 12 Dorset Heathlands Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11034",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:20.783Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 115494,
+            "id" : "RIS-UK11034",
+            "title" : "Lee Valley - untitled",
+            "published_date" : "2000-09-22",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11034.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11034 Page 1 of 9 Lee Valley Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), as amend..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK13050",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:23.898Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 124091,
+            "id" : "RIS-UK13050",
+            "title" : "North Uist Machair and Islands - untitled",
+            "published_date" : "2000-10-13",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK13050.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK13050 Page 1 of 10 North Uist Machair and Islands Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11012",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:24.746Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 124474,
+            "id" : "RIS-UK11012",
+            "title" : "Chesil Beach and The Fleet - untitled",
+            "published_date" : "1985-07-17",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11012.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11012 Page 1 of 10 Chesil Beach and The Fleet Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11024",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:26.507Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 112892,
+            "id" : "RIS-UK11024",
+            "title" : "Esthwaite Water - untitled",
+            "published_date" : "1991-11-07",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11024.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11024 Page 1 of 8 Esthwaite Water Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), as ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11017",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:27.483Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 120256,
+            "id" : "RIS-UK11017",
+            "title" : "Deben Estuary - untitled",
+            "published_date" : "1996-03-11",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11017.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11017 Page 1 of 9 Deben Estuary Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), as am..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11047",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:27.865Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 131118,
+            "id" : "RIS-UK11047",
+            "title" : "The New Forest - untitled",
+            "published_date" : "1993-09-22",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11047.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11047 Page 1 of 13 The New Forest Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), as ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK11055",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:30.454Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 119059,
+            "id" : "RIS-UK11055",
+            "title" : "Portsmouth Harbour - untitled",
+            "published_date" : "1995-02-28",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK11055.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK11055 Page 1 of 9 Portsmouth Harbour Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recommendation 4.7 (1990), ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "RIS-UK43001",
+          "_score" : 1.0,
+          "_source" : {
+            "site" : "website-assets",
+            "timestamp_utc" : "2022-03-03T15:22:26.449Z",
+            "resource_type" : "publication",
+            "file_extension" : "pdf",
+            "file_bytes" : 165959,
+            "id" : "RIS-UK43001",
+            "title" : "North, Middle and East Caicos Islands - untitled",
+            "published_date" : "1997-09-03",
+            "url" : "http://jncc.gov.uk/jncc-assets/RIS/UK43001.pdf",
+            "content_truncated" : "Ramsar Information Sheet: UK43001 Page 1 of 18 North, Middle and East Caicos Islands Produced by JNCC: Version 3.0, 13/06/2008 Information Sheet on Ramsar Wetlands (RIS) Categories approved by Recomme..."
+          }
+        }
+      ]
+    },
+    "aggregations" : {
+      "other" : {
+        "doc_count" : 1
+      },
+      "file_types" : {
+        "doc_count_error_upper_bound" : 0,
+        "sum_other_doc_count" : 0,
+        "buckets" : [
+          {
+            "key" : "pdf",
+            "doc_count" : 1754
+          },
+          {
+            "key" : "csv",
+            "doc_count" : 1
+          }
+        ]
+      }
+    }
+  }
+  

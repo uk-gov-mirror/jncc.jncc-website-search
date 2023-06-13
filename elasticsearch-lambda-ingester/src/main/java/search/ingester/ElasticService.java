@@ -17,9 +17,6 @@ import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import search.ingester.models.Document;
 
 public class ElasticService {
@@ -91,14 +88,4 @@ public class ElasticService {
             }
         }
     }    
-
-    public void deleteByParentId(String index, String parentDocId) throws IOException {
-
-        DeleteByQueryRequest req = new DeleteByQueryRequest(index);
-        req.setQuery(QueryBuilders.matchQuery("parent_id", parentDocId));
-
-        BulkByScrollResponse res = ElasticService.getEsClient(env).deleteByQuery(req, RequestOptions.DEFAULT);
-
-        // TODO: Need to check the response of this
-    }
 }

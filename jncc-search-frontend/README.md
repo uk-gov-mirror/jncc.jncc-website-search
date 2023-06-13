@@ -19,7 +19,7 @@ Files/folders:
 
 ## Use the SAM CLI to build and test locally
 
-Create a .env file using the .env.example template
+Create a .env file using the .env.example template. Set env to `localdev` to use local example data. 
 
 Setup and activate a python venv to run aws sam
   

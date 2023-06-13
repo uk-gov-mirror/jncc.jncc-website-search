@@ -1,0 +1,270 @@
+{
+    "took" : 14,
+    "timed_out" : false,
+    "_shards" : {
+      "total" : 5,
+      "successful" : 5,
+      "skipped" : 0,
+      "failed" : 0
+    },
+    "hits" : {
+      "total" : {
+        "value" : 1972,
+        "relation" : "eq"
+      },
+      "max_score" : 0.0,
+      "hits" : [
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000189",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral rock (and other hard substrata)"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:13.100Z",
+            "id" : "JNCCMNCR00000189",
+            "title" : "LR.HLR.FR.Him Himanthalia elongata and red seaweeds on exposed to moderately exposed lower eulittoral rock",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000189",
+            "content_truncated" : "Exposed to moderately exposed lower eulittoral bedrock characterised by the wrack Himanthalia elongata with a dense turf of red seaweeds beneath. H. elongata may occur on tide-swept, sheltered shores ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000190",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Sublittoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:13.300Z",
+            "id" : "JNCCMNCR00000190",
+            "title" : "SS.SMu.SMuLS Sublittoral mud in low or reduced salinity (lagoons)",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000190",
+            "content_truncated" : "Shallow, typically anoxic, muddy and sandy mud sediments in areas of low or reduced, although stable, salinity (may vary annually) with largely ephemeral faunal communities. Characterised by Arenicola..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000198",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:13.249Z",
+            "id" : "JNCCMNCR00000198",
+            "title" : "LS.LBR Littoral biogenic reefs",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000198",
+            "content_truncated" : "The Littoral Biogenic Reefs habitat complex contains two biotope complexes (littoral Sabellaria reefs, and mixed sediment shores with mussels), encompassing the littoral biotope dominated by the honey..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000236",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral rock (and other hard substrata)"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:14.265Z",
+            "id" : "JNCCMNCR00000236",
+            "title" : "LR.FLR.Rkp.Cor Coralline crust-dominated shallow eulittoral rockpools",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000236",
+            "content_truncated" : "Shallow and smaller rockpools throughout the eulittoral zone in a wide range of wave exposures characterised by a covering of encrusting coralline algae on which Corallina officinalis often forms a de..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000347",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:14.731Z",
+            "id" : "JNCCMNCR00000347",
+            "title" : "LS.LMu.MEst.HedLbalScr Hediste diversicolor, Limecola balthica and Scrobicularia plana in littoral sandy mud",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000347",
+            "content_truncated" : "Mainly mid shore mud or sandy mud subject to variable salinity on sheltered estuarine shores. Typically, the sediment is wet in appearance and has an anoxic layer below 1 cm depth. The surface of the ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000324",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Sublittoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:15.381Z",
+            "id" : "JNCCMNCR00000324",
+            "title" : "SS.SMu.OMu Offshore circalittoral mud",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000324",
+            "content_truncated" : "In mud and cohesive sandy mud in the offshore circalittoral zone, typically below 50-70 m, a variety of faunal communities may develop, depending upon the level of silt/clay and organic matter in the ..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000367",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral rock (and other hard substrata)"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:15.716Z",
+            "id" : "JNCCMNCR00000367",
+            "title" : "LR.LLR.FVS.AscVS Ascophyllum nodosum and Fucus vesiculosus on variable salinity mid eulittoral rock",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000367",
+            "content_truncated" : "Very sheltered to extremely sheltered mid eulittoral bedrock, boulders or cobbles subject to variable salinity characterised by an impoverished community dominated by a mixture of the wracks Ascophyll..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000350",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:15.802Z",
+            "id" : "JNCCMNCR00000350",
+            "title" : "LS.LMp Littoral macrophyte-dominated sediment",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000350",
+            "content_truncated" : "Littoral macrophyte-dominated sediment biotopes include saltmarshes on the upper shore and seagrass beds on the mid and upper shore. These higher plant-dominated communities develop mostly on sheltere..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000374",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Sublittoral sediment"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:15.962Z",
+            "id" : "JNCCMNCR00000374",
+            "title" : "SS.SBR.SMus Sublittoral mussel beds (on sublittoral sediment)",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000374",
+            "content_truncated" : "Sublittoral mussel beds comprised of either the horse mussel Modiolus modiolus or the common mussel Mytilus edulis. These communities may be sublittoral extensions of littoral reefs or exist independe..."
+          }
+        },
+        {
+          "_index" : "beta",
+          "_type" : "_doc",
+          "_id" : "JNCCMNCR00000354",
+          "_score" : 0.0,
+          "_source" : {
+            "site" : "mhc",
+            "keywords" : [
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "biotope"
+              },
+              {
+                "vocab" : "http://vocab.jncc.gov.uk/mhc",
+                "value" : "Littoral rock (and other hard substrata)"
+              }
+            ],
+            "timestamp_utc" : "2022-03-03T15:51:16.261Z",
+            "id" : "JNCCMNCR00000354",
+            "title" : "LR.FLR.Lic.Pra Prasiola stipitata on nitrate-enriched supralittoral or littoral fringe rock",
+            "published_date" : "2015-03",
+            "url" : "https://mhc.jncc.gov.uk/biotopes/jnccmncr00000354",
+            "content_truncated" : "Exposed to moderately exposed bedrock and large boulders in the supralittoral and littoral fringe that receives nitrate enrichment from nearby roosting sea birds and is characterised by a band or patc..."
+          }
+        }
+      ]
+    }
+  }
+  
