@@ -21,6 +21,8 @@ namespace datahubIndexer
 {
     class Program
     {
+        private static int messagesSent = 0;
+
         public class Options {
             [Option('a', "assetId", Required = false, HelpText = "Asset GUID to be indexed")]
             public string AssetId { get; set; }
@@ -36,10 +38,12 @@ namespace datahubIndexer
 
         static void Run(Options opts)
         {
+            DateTime start = DateTime.Now;
             Console.WriteLine($"DynamoDB table {Env.Var.DynamoDbTable}");
             Console.WriteLine($"Lambda function {Env.Var.LambdaFunction}");
 
             List<Asset> assets;
+            int assetResourceCount = 0;
 
             if (opts.AssetId != null && !string.IsNullOrWhiteSpace(opts.AssetId)) {
                 assets = new List<Asset> {
@@ -50,6 +54,10 @@ namespace datahubIndexer
             } else {
                 assets = GetAllAssets();
             }
+
+            assets.ForEach(asset => {
+                assetResourceCount = assetResourceCount + asset.Data.Count;
+            });
 
             var errors = 0;
 
@@ -72,6 +80,12 @@ namespace datahubIndexer
                 Console.WriteLine($"Indexing Completed for {assets.Count} assets, no errors");
             }
 
+            DateTime end = DateTime.Now;
+            Console.WriteLine($"Should have {assetResourceCount} search documents resources");
+            Console.WriteLine($"Sent {messagesSent} lamba invocations");
+            Console.WriteLine($"Start time - {start.ToShortTimeString()}");
+            Console.WriteLine($"End time - {end.ToShortTimeString()}");
+            Console.WriteLine($"Took - {(end - start).TotalMinutes} Minutes");
         }
 
 
@@ -196,6 +210,7 @@ namespace datahubIndexer
 
             if (lambdaResponse != null && lambdaResponse.StatusCode == 200 && lambdaResponse.FunctionError == null) {
                 Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda for {asset.Id}");
+                messagesSent++;
             } else {
                 throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, {lambdaResponse.StatusCode} {lambdaResponse.FunctionError}");
             }
@@ -207,6 +222,7 @@ namespace datahubIndexer
 
             if (response != null && response.StatusCode == 200 && response.FunctionError == null) {
                 Console.WriteLine($"Successfully invoked {Env.Var.LambdaFunction} lambda");
+                messagesSent++;
             } else {
                 throw new Exception($"Something went wrong while invoking {Env.Var.LambdaFunction} lambda, {response.StatusCode} {response.FunctionError}");
             }
