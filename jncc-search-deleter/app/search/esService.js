@@ -9,8 +9,8 @@ exports.deleteById = async function (id, index) {
 
     var body = {
         query: {
-            match: {
-                asset_id: id
+            term: {
+                'asset_id.keyword': id
             }
         }
     }
@@ -23,8 +23,8 @@ exports.deleteBySite = async function (site, index) {
 
     var body = {
         query: {
-            match: {
-                site: site
+            term: {
+                'site.keyword': site
             }
         }
     }
