@@ -42,6 +42,8 @@ function deleteByQuery(body, index) {
     req.headers['content-type'] = "application/json"
     req.body = JSON.stringify(body)
 
+    console.log(`Request body: ${req.body}`)
+
     var signer = new AWS.Signers.V4(req , 'es')
     signer.addAuthorization(creds, new Date())
 
