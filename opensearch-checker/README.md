@@ -25,7 +25,7 @@ To get the opensearch dump (you'll need to run this on the EC2 in the private VP
             "timestamp_utc"
         ]
     }
-    '
+    ' > opensearch_output.json
 
 Then give both files to the checker:
 
