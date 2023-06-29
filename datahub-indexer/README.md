@@ -38,6 +38,10 @@ To run the indexer against a single asset
 
     dotnet run --assetId id-here
 
+To run the indexer against a file list of assets
+
+    dotnet run --filepath filepath-here
+
 For assets with pdf data, the message will be saved to S3 so check it's appeared there
 
     aws s3 ls s3://large-message-bucket/ --endpoint http://localhost:4572

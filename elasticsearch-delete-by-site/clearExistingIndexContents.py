@@ -26,7 +26,7 @@ def main(host, index, site):
 
     logging.info(f'Deleting all documents where site={site}')
 
-    es.delete_by_query(index=index, body={"query": {"match": {"site": site}}})
+    es.delete_by_query(index=index, body={"query": {"term": {"site.keyword": site}}})
 
 if __name__ == '__main__':
     # Setup command line switches

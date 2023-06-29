@@ -12,12 +12,10 @@ exports.lambdaHandler = async (event) => {
         throw new Error('Expecting an id or site, and an index to be provided')
     }
 
-    console.log(`${JSON.stringify(response.errorMessage)}`)
-
     if (response && response.statusCode == 200) {
         console.log(`Delete query was successful`)
     } else {
-        throw new Error(`Something's gone wrong`)
+        throw new Error(`Something's gone wrong: ${JSON.stringify(response.errorMessage)}`)
     }
 
     console.log('Done')

@@ -26,6 +26,9 @@ namespace datahubIndexer
         public class Options {
             [Option('a', "assetId", Required = false, HelpText = "Asset GUID to be indexed")]
             public string AssetId { get; set; }
+
+            [Option('f', "filepath", Required = false, HelpText = "Path to textfile with newline delimited GUIDs to be indexed")]
+            public string Filepath { get; set; }
         }
 
         public static void Main(string[] args)
@@ -46,8 +49,10 @@ namespace datahubIndexer
                 assets = new List<Asset> {
                     GetAsset(opts.AssetId)
                 };
+            } else if (opts.Filepath != null && !string.IsNullOrWhiteSpace(opts.Filepath)) {
+                assets = GetAssetsFromFile(opts.Filepath);
             } else {
-                assets = GetAssets();
+                assets = GetAllAssets();
             }
 
             assets.ForEach(asset => {
@@ -132,13 +137,7 @@ namespace datahubIndexer
                 var url = new Uri(data.Http.Url);
                 
                 Console.WriteLine($"Getting base 64 encoding of {url}");
-
-                using (var stream = new WebClient().OpenRead(url))
-                using (var memstream = new MemoryStream())
-                {
-                    stream.CopyTo(memstream);
-                    data.Http.FileBase64 = Convert.ToBase64String(memstream.ToArray());
-                }
+                data.Http.FileBase64 = GetBase64Encoding(url);
             }
         }
 
@@ -290,9 +289,36 @@ namespace datahubIndexer
                 return asset;
             }
         }
-        static List<Asset> GetAssets()
+
+        static List<Asset> GetAssetsFromFile(string filepath)
         {
-            Console.WriteLine("Getting asset list");
+            Console.WriteLine("Getting asset ids from file");
+            var lines = File.ReadLines(filepath);
+
+            var assetIds = new List<String>();
+            foreach (var line in lines){
+                assetIds.Add(line.Trim());
+            }
+
+            var assets = new List<Asset>();
+            using (var client = GetDynamoDBClient())
+            using (var context = new DynamoDBContext(client)) {
+                var assetTable = Table.LoadTable(client, Env.Var.DynamoDbTable);
+
+                foreach (var id in assetIds){
+                    var result = assetTable.GetItemAsync(id).Result;
+                    var asset = JsonConvert.DeserializeObject<Asset>(result.ToJson());
+                    Console.WriteLine($"{asset.Id} {asset.Metadata.Title}");
+                    assets.Add(asset);
+                }
+            }
+
+            return assets;
+        }
+
+        static List<Asset> GetAllAssets()
+        {
+            Console.WriteLine("Getting all assets from dynamo");
             var assets = new List<Asset>();
 
             using (var client = GetDynamoDBClient())

@@ -9,8 +9,8 @@ exports.deleteById = async function (id, index) {
 
     var body = {
         query: {
-            match: {
-                asset_id: id
+            term: {
+                'asset_id.keyword': id
             }
         }
     }
@@ -23,8 +23,8 @@ exports.deleteBySite = async function (site, index) {
 
     var body = {
         query: {
-            match: {
-                site: site
+            term: {
+                'site.keyword': site
             }
         }
     }
@@ -41,6 +41,8 @@ function deleteByQuery(body, index) {
     req.headers['host'] = endpoint.host
     req.headers['content-type'] = "application/json"
     req.body = JSON.stringify(body)
+
+    console.log(`Request body: ${req.body}`)
 
     var signer = new AWS.Signers.V4(req , 'es')
     signer.addAuthorization(creds, new Date())
