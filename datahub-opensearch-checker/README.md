@@ -14,7 +14,7 @@ To get the opensearch dump (you'll need to run this on the EC2 in the private VP
         "query": { 
             "bool": {
             "filter": [ 
-                { "term":  { "site": "datahub" }}
+                { "term":  { "site.keyword": "datahub" }}
             ]
             }
         },
