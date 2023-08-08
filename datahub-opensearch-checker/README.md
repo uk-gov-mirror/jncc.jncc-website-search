@@ -13,9 +13,9 @@ To get the opensearch dump (you'll need to run this on the EC2 in the private VP
         "size": 10000,
         "query": { 
             "bool": {
-            "filter": [ 
-                { "term":  { "site.keyword": "datahub" }}
-            ]
+                "filter": [ 
+                    { "term":  { "site.keyword": "datahub" }}
+                ]
             }
         },
         "_source": [
@@ -26,6 +26,10 @@ To get the opensearch dump (you'll need to run this on the EC2 in the private VP
         ]
     }
     ' > opensearch_output.json
+
+Download the file if you're running the code locally (you can find the key in the key folder):
+
+    scp -i <path_to_key> ubuntu@<public_dns>:~/opensearch_output.json .
 
 Then give both files to the checker:
 

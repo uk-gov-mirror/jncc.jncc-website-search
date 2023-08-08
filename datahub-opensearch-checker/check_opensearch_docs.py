@@ -4,7 +4,7 @@ import json
 
 def resource_exists_in_opensearch(resource_title, asset_id, opensearch_docs):
     for doc in opensearch_docs:
-        if asset_id == doc['_source']['asset_id'] and resource_title == doc['_source']['title']:
+        if asset_id == doc['_source']['asset_id'] and doc['_source']['title'].startswith(resource_title):
             return True
         
     return False
