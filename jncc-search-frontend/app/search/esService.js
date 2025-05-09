@@ -7,7 +7,7 @@
 const { defaultProvider } = require('@aws-sdk/credential-provider-node'); // V3 SDK.
 const { Client } = require('@opensearch-project/opensearch');
 const { AwsSigv4Signer } = require('@opensearch-project/opensearch/aws');
-const { ES_ENDPOINT, ES_REGION } = require('../env');
+const { ES_ENDPOINT, ES_INDEX, ES_REGION } = require('../env');
 
 const client = new Client({
   ...AwsSigv4Signer({
@@ -27,7 +27,7 @@ exports.queryElasticsearch = async function (payload) {
 
     return new Promise((resolve, reject) => {
         client.search({
-            index: env.ES_INDEX,
+            index: ES_INDEX,
             body: payload
         }).then(
             response => {
