@@ -19,7 +19,7 @@ const client = new Client({
       return credentialsProvider();
     },
   }),
-  node: ES_ENDPOINT,
+  node: `https://${ES_ENDPOINT}`,
 });
 
 exports.queryElasticsearch = async function (payload) {
