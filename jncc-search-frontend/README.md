@@ -14,7 +14,7 @@ Files/folders:
 
 ## Prerequisites
 
-* Node.js - [Install Node.js 12](https://nodejs.org/en/), including the NPM package management tool.
+* Node.js - [Install Node.js 22](https://nodejs.org/en/), including the NPM package management tool.
 * Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
 
 ## Use the SAM CLI to build and test locally
@@ -34,5 +34,7 @@ Build your application with the `sam build` command. This will create a deployme
 Run the API gateway locally to initiate requests to the lambda via the browser. Note that you'll need to restart this if your credentials change.
 
     sam local start-api --static-dir <path to static-assets dir>
+
+NOTE: SAM starts in .aws-sam/build/ so you need to specify the path to the static-assets directory relative to that i.e. `--static-dir ../../static-assets`.
 
 The site should then be accessible via http://localhost:3000/. You'll need to do a `sam build` every time you make a change as there's currently no --watch flag.

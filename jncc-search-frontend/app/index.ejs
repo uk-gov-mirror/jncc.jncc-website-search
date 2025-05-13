@@ -121,8 +121,7 @@ function formatBytes(bytes, decimals = 2) {
     <title>Search | JNCC</title>
     <link rel="stylesheet" href="/assets/frontend/css/app.css">
     <link rel="shortcut icon" href="/assets/frontend/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
-    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     <link rel="stylesheet" href="/assets/css/site.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script>window.jQuery || document.write('<script src="/assets/frontend/js/lib/jquery-3.3.1.min.js" defer><\/script>')</script>
@@ -162,115 +161,118 @@ function formatBytes(bytes, decimals = 2) {
                     </div>
                 </div>
             </div>
-            <nav class="top-bar nav no-page-hero" id="menu" data-animate="hinge-in-from-top spin-out" aria-label="main-navigation">
-				<div class="container mobileNavContainer">
-					<ul class="vertical medium-horizontal menu dropdown" data-dropdown-menu data-click-open data-alignment="left"
-                     style="vertical-align:middle;">
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/our-role/">Our role</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/our-role/the-uk/">The UK</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/our-role/the-offshore-marine-environment/">The offshore marine environment</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/our-role/the-uks-overseas-territories/">The UK&#39;s Overseas Territories</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/our-role/international/">International</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/monitoring/">Monitoring</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/monitoring/cost-effective-approaches/">Cost-effective approaches</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/monitoring/earth-observation/">Earth observation</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/monitoring/marine-monitoring-mapping/">Marine monitoring &amp; mapping</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/monitoring/analyses-trends/">Analyses &amp; trends</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/evaluating/">Evaluating</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/evaluating/sustainable-global-supply-chains/">Sustainable global supply chains</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/evaluating/land-use/">Land use</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/evaluating/climate-change/">Climate change</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/advice/">Advice</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/advice/improving-global-co-ordination-action/">Improving global co-ordination &amp; action</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/advice/offshore-industries/">Offshore Industries</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/advice/marine-protected-areas/">Marine Protected Areas</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/advice/sustainable-development-overseas/">Sustainable development overseas</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/our-work/">Our work</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/our-work/our-work-a-z/">Our work A–Z</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menuitem">
-                            <a href="<%- hubUrl %>">Resources</a>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="<%- baseUrl %>/about-jncc/">About JNCC</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/who-we-are/">Who we are</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/how-we-work/">How we work</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/our-performance/">Our performance</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/corporate-information/">Corporate information</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/jncc-blog/">JNCC Blog</a>
-                                </li>
-                                <li class="">
-                                    <a href="<%- baseUrl %>/about-jncc/careers/">Careers</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menuitem">
-                            <a href="<%- baseUrl %>/news/">News</a>
-                        </li>
-					</ul>
-				</div>
-			</nav>
+            <div class="global-alert-row no-page-hero">
+                <nav class="top-bar nav no-page-hero" id="menu" data-animate="hinge-in-from-top spin-out" aria-label="main-navigation">
+                    <div class="container mobileNavContainer">
+                        <ul class="vertical medium-horizontal menu dropdown" data-dropdown-menu data-click-open data-alignment="left"
+                         style="vertical-align:middle;">
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/our-role/">Our role</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-uk/">The UK</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-offshore-marine-environment/">The offshore marine environment</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-uks-overseas-territories/">The UK&#39;s Overseas Territories</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/international/">International</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/monitoring/">Monitoring</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/cost-effective-approaches/">Cost-effective approaches</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/earth-observation/">Earth observation</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/marine-monitoring-mapping/">Marine monitoring &amp; mapping</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/analyses-trends/">Analyses &amp; trends</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/evaluating/">Evaluating</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/sustainable-global-supply-chains/">Sustainable global supply chains</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/land-use/">Land use</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/climate-change/">Climate change</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/advice/">Advice</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/improving-global-co-ordination-action/">Improving global co-ordination &amp; action</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/offshore-industries/">Offshore Industries</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/marine-protected-areas/">Marine Protected Areas</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/sustainable-development-overseas/">Sustainable development overseas</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/our-work/">Our work</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-work/our-work-a-z/">Our work A–Z</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menuitem">
+                                <a href="<%- hubUrl %>">Resources</a>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/about-jncc/">About JNCC</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/who-we-are/">Who we are</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/how-we-work/">How we work</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/our-performance/">Our performance</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/corporate-information/">Corporate information</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/jncc-blog/">JNCC Blog</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/careers/">Careers</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menuitem">
+                                <a href="<%- baseUrl %>/news/">News</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>                
+            </div>
+
         </header>
 
         <main id="main">
