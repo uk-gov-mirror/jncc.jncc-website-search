@@ -1,13 +1,13 @@
-const esService = require('search/esService')
+import { deleteById, deleteBySite } from 'search/esService.js'
 
-exports.lambdaHandler = async (event) => {
+export async function lambdaHandler(event) {
     console.log('Starting jncc-search-deleter lambda')
 
     var response = null
     if (event.id && event.index) {
-        response = await esService.deleteById(event.id, event.index)
+        response = await deleteById(event.id, event.index)
     } else if (event.site && event.index) {
-        response = await esService.deleteBySite(event.site, event.index)
+        response = await deleteBySite(event.site, event.index)
     } else {
         throw new Error('Expecting an id or site, and an index to be provided')
     }

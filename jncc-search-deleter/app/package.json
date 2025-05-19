@@ -1,15 +1,17 @@
 {
   "name": "jncc-search-deleter",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Utility function used by the microsites to delete from Opensearch",
   "main": "app.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
   "dependencies": {
+    "@aws-sdk/credential-provider-node": "^3.812.0",
+    "@opensearch-project/opensearch": "^3.5.1",
     "dotenv": "^10.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
