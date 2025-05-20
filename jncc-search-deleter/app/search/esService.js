@@ -19,10 +19,13 @@ const client = new Client({
 export async function deleteById (id, index) {
     console.log(`Sending delete request for assets with id=${id}`)
 
-    return client.delete({
-        index: index,
-        id: id,
-    });
+    return client.delete_by_query({index: index, body: {
+        query: {
+            term: {
+                'asset_id.keyword': id
+            }
+        }
+    }})
 }
 
 export async function deleteBySite (site, index) {
