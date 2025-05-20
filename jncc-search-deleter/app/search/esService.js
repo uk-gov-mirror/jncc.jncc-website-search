@@ -16,7 +16,7 @@ const client = new Client({
     node: `https://${env.ES_ENDPOINT}`,
 })
 
-export async function deleteById (id, ) {
+export async function deleteById (id, index) {
     console.log(`Sending delete request for assets with id=${id}`)
 
     return client.delete({
