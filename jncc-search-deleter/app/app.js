@@ -1,4 +1,4 @@
-import { deleteById, deleteBySite } from 'search/esService.js'
+import { deleteById, deleteBySite } from './search/esService.js'
 
 export async function lambdaHandler(event) {
     console.log('Starting jncc-search-deleter lambda')
