@@ -1,2 +1,5 @@
 XDG_CACHE_HOME
 
+.aws-sam
+.venv
+*.zip

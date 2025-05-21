@@ -3,6 +3,14 @@ var maxConsecutivePages = 8
 var visiblePagesBeforeOrAfterCurrentPage = 3
 var totalPages = hits ? Math.ceil(hits.total.value/queryParams.pageSize) : 1
 
+if (env === 'live') {
+    var baseUrl = 'https://jncc.gov.uk'
+    var hubUrl = 'https://hub.jncc.gov.uk/'
+} else {
+    var baseUrl = 'https://jncc-website-devuat.azurewebsites.net'
+    var hubUrl = 'https://jncc-website-devuat.azurewebsites.net/resources'
+}
+
 function isCookiePolicyAccepted() {
     return false
 }
@@ -96,16 +104,24 @@ function formatBytes(bytes, decimals = 2) {
     <!-- End Google Tag Manager -->
     
     <meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
-    <% } %> 
+    <% } else { %> 
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-N5FR48L2');</script>
+    <!-- End Google Tag Manager -->
+    <% } %>
 
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow" />
     <title>Search | JNCC</title>
     <link rel="stylesheet" href="/assets/frontend/css/app.css">
     <link rel="shortcut icon" href="/assets/frontend/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" 
-    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     <link rel="stylesheet" href="/assets/css/site.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
     <script>window.jQuery || document.write('<script src="/assets/frontend/js/lib/jquery-3.3.1.min.js" defer><\/script>')</script>
@@ -114,6 +130,14 @@ function formatBytes(bytes, decimals = 2) {
     <script src="/assets/js/app.js" defer></script>
 </head>
 <body>
+    <% if (env === 'live') { %>
+
+    <% } else { %> 
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src=https://www.googletagmanager.com/ns.html?id=GTM-N5FR48L2 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+    <% } %>
+    
     <noscript><div>Javascript must be enabled for the correct page display</div></noscript>
     
     <div id="wrapper">
@@ -121,7 +145,7 @@ function formatBytes(bytes, decimals = 2) {
         <header id="header">
             <div class="container">
                 <strong class="logo">
-                    <a href="https://jncc.gov.uk" accesskey="1"><img src="/assets/frontend/images/logo.png" alt="JNCC"></a>
+                    <a href="<%- baseUrl %>" accesskey="1"><img src="/assets/frontend/images/logo.png" alt="JNCC"></a>
                 </strong>
                 <form role="search" class="top-bar search-form input-group" id="search-form" novalidate="novalidate" data-animate="hinge-in-from-top spin-out">
                     <label for="search-field" class="show-for-sr" accesskey="4">Search:</label>
@@ -137,115 +161,118 @@ function formatBytes(bytes, decimals = 2) {
                     </div>
                 </div>
             </div>
-            <nav class="top-bar nav no-page-hero" id="menu" data-animate="hinge-in-from-top spin-out" aria-label="main-navigation">
-				<div class="container mobileNavContainer">
-					<ul class="vertical medium-horizontal menu dropdown" data-dropdown-menu data-click-open data-alignment="left"
-                     style="vertical-align:middle;">
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/our-role/">Our role</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/our-role/the-uk/">The UK</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/our-role/the-offshore-marine-environment/">The offshore marine environment</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/our-role/the-uks-overseas-territories/">The UK&#39;s Overseas Territories</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/our-role/international/">International</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/monitoring/">Monitoring</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/monitoring/cost-effective-approaches/">Cost-effective approaches</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/monitoring/earth-observation/">Earth observation</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/monitoring/marine-monitoring-mapping/">Marine monitoring &amp; mapping</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/monitoring/analyses-trends/">Analyses &amp; trends</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/evaluating/">Evaluating</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/evaluating/sustainable-global-supply-chains/">Sustainable global supply chains</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/evaluating/land-use/">Land use</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/evaluating/climate-change/">Climate change</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/advice/">Advice</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/advice/improving-global-co-ordination-action/">Improving global co-ordination &amp; action</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/advice/offshore-industries/">Offshore Industries</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/advice/marine-protected-areas/">Marine Protected Areas</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/advice/sustainable-development-overseas/">Sustainable development overseas</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/our-work/">Our work</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/our-work/our-work-a-z/">Our work A–Z</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menuitem">
-                            <a href="https://hub.jncc.gov.uk/">Resources</a>
-                        </li>
-                        <li class="is-dropdown-submenu-parent">
-                            <a href="https://jncc.gov.uk/about-jncc/">About JNCC</a>
-                            <ul class="vertical menu nested">
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/who-we-are/">Who we are</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/how-we-work/">How we work</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/our-performance/">Our performance</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/corporate-information/">Corporate information</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/jncc-blog/">JNCC Blog</a>
-                                </li>
-                                <li class="">
-                                    <a href="https://jncc.gov.uk/about-jncc/careers/">Careers</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menuitem">
-                            <a href="https://jncc.gov.uk/news/">News</a>
-                        </li>
-					</ul>
-				</div>
-			</nav>
+            <div class="global-alert-row no-page-hero">
+                <nav class="top-bar nav no-page-hero" id="menu" data-animate="hinge-in-from-top spin-out" aria-label="main-navigation">
+                    <div class="container mobileNavContainer">
+                        <ul class="vertical medium-horizontal menu dropdown" data-dropdown-menu data-click-open data-alignment="left"
+                         style="vertical-align:middle;">
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/our-role/">Our role</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-uk/">The UK</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-offshore-marine-environment/">The offshore marine environment</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/the-uks-overseas-territories/">The UK&#39;s Overseas Territories</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-role/international/">International</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/monitoring/">Monitoring</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/cost-effective-approaches/">Cost-effective approaches</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/earth-observation/">Earth observation</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/marine-monitoring-mapping/">Marine monitoring &amp; mapping</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/monitoring/analyses-trends/">Analyses &amp; trends</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/evaluating/">Evaluating</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/sustainable-global-supply-chains/">Sustainable global supply chains</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/land-use/">Land use</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/evaluating/climate-change/">Climate change</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/advice/">Advice</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/improving-global-co-ordination-action/">Improving global co-ordination &amp; action</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/offshore-industries/">Offshore Industries</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/marine-protected-areas/">Marine Protected Areas</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/advice/sustainable-development-overseas/">Sustainable development overseas</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/our-work/">Our work</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/our-work/our-work-a-z/">Our work A–Z</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menuitem">
+                                <a href="<%- hubUrl %>">Resources</a>
+                            </li>
+                            <li class="is-dropdown-submenu-parent">
+                                <a href="<%- baseUrl %>/about-jncc/">About JNCC</a>
+                                <ul class="vertical menu nested">
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/who-we-are/">Who we are</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/how-we-work/">How we work</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/our-performance/">Our performance</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/corporate-information/">Corporate information</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/jncc-blog/">JNCC Blog</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="<%- baseUrl %>/about-jncc/careers/">Careers</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menuitem">
+                                <a href="<%- baseUrl %>/news/">News</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>                
+            </div>
+
         </header>
 
         <main id="main">
@@ -422,9 +449,9 @@ function formatBytes(bytes, decimals = 2) {
 						<nav class="holder" aria-label="footer-navigation">
 							<h3>About us</h3>
 							<ul class="footer-nav no-bullet">
-								<li><a href="https://jncc.gov.uk/about-jncc/">About JNCC</a></li>
-								<li><a href="https://jncc.gov.uk/about-jncc/careers/">Careers</a></li>
-								<li><a href="https://jncc.gov.uk/about-jncc/corporate-information/procurement/">Procurement</a></li>
+								<li><a href="<%- baseUrl %>/about-jncc/">About JNCC</a></li>
+								<li><a href="<%- baseUrl %>/about-jncc/careers/">Careers</a></li>
+								<li><a href="<%- baseUrl %>/about-jncc/corporate-information/procurement/">Procurement</a></li>
 							</ul>
 						</nav>
 					</div>
@@ -432,10 +459,10 @@ function formatBytes(bytes, decimals = 2) {
 						<nav class="holder" aria-label="footer-navigation">
 							<h3>Our work</h3>
 							<ul class="footer-nav no-bullet">
-								<li><a href="https://jncc.gov.uk/our-work/our-work-a-z/">Our work A-Z</a></li>
-								<li><a href="https://hub.jncc.gov.uk/">Resource hub</a></li>
-								<li><a href="https://jncc.gov.uk/about-jncc/jncc-blog/">JNCC Blog</a></li>
-								<li><a href="https://jncc.gov.uk/news/">News</a></li>
+								<li><a href="<%- baseUrl %>/our-work/our-work-a-z/">Our work A-Z</a></li>
+								<li><a href="<%- hubUrl %>">Resource hub</a></li>
+								<li><a href="<%- baseUrl %>/about-jncc/jncc-blog/">JNCC Blog</a></li>
+								<li><a href="<%- baseUrl %>/news/">News</a></li>
 							</ul>
 						</nav>
 					</div>
@@ -443,10 +470,10 @@ function formatBytes(bytes, decimals = 2) {
 						<nav class="holder" aria-label="footer-navigation">
 							<h3>Our services</h3>
 							<ul class="footer-nav no-bullet">
-								<li><a href="https://jncc.gov.uk/our-role/">Our role</a></li>
-								<li><a href="https://jncc.gov.uk/monitoring/">Monitoring</a></li>
-								<li><a href="https://jncc.gov.uk/evaluating/">Evaluating</a></li>
-								<li><a href="https://jncc.gov.uk/advice/">Advice</a></li>
+								<li><a href="<%- baseUrl %>/our-role/">Our role</a></li>
+								<li><a href="<%- baseUrl %>/monitoring/">Monitoring</a></li>
+								<li><a href="<%- baseUrl %>/evaluating/">Evaluating</a></li>
+								<li><a href="<%- baseUrl %>/advice/">Advice</a></li>
 							</ul>
 						</nav>
 					</div>
@@ -460,11 +487,11 @@ function formatBytes(bytes, decimals = 2) {
 			</div>
 			<div class="footer-bottom">
 				<div class="container">
-					<p>&copy; Joint Nature Conservation Committee, Monkstone House, City Road, Peterborough, PE1 1JY<br>Tel: 01733 562626 Fax: 01733 555948. Contact us:&nbsp;<a href="https://jncc.gov.uk/contact/?ref=search" title="contact" data-anchor="?ref=search">Enquiry form</a><br>JNCC SUPPORT CO. Registered in England and Wales. Company no. 05380206. Registered office as above</p>
+					<p>&copy; Joint Nature Conservation Committee, Monkstone House, City Road, Peterborough, PE1 1JY<br>Tel: 01733 562626 Fax: 01733 555948. Contact us:&nbsp;<a href="<%- baseUrl %>/contact/?ref=search" title="contact" data-anchor="?ref=search">Enquiry form</a><br>JNCC SUPPORT CO. Registered in England and Wales. Company no. 05380206. Registered office as above</p>
 					<ul class="footer-bottom-list no-bullet info">
-						<li><a href="https://jncc.gov.uk/about-jncc/corporate-information/privacy-statement/">Privacy statement</a></li>
-						<li><a href="https://jncc.gov.uk/about-jncc/corporate-information/accessibility-statement/">Accessibility statement</a></li>
-						<li><a href="https://jncc.gov.uk/about-jncc/corporate-information/cookie-policy/">Cookie policy</a></li>
+						<li><a href="<%- baseUrl %>/about-jncc/corporate-information/privacy-statement/">Privacy statement</a></li>
+						<li><a href="<%- baseUrl %>/about-jncc/corporate-information/accessibility-statement/">Accessibility statement</a></li>
+						<li><a href="<%- baseUrl %>/about-jncc/corporate-information/cookie-policy/">Cookie policy</a></li>
 					</ul>
 				</div>
 			</div>

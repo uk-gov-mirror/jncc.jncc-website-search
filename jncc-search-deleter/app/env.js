@@ -1,6 +1,6 @@
-require('dotenv').config();
+import 'dotenv/config'
 
-module.exports = {
+export default {
     get ES_INDEX()    { return process.env.ES_INDEX },
     get ES_ENDPOINT() { return process.env.ES_ENDPOINT },
     get ES_REGION() { return process.env.ES_REGION }
