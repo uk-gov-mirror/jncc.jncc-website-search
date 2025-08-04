@@ -9,10 +9,6 @@ if (env === 'live') {
     var baseUrl = 'https://jncc-website-devuat.azurewebsites.net'
 }
 
-function isCookiePolicyAccepted() {
-    return false
-}
-
 function getPaginationStart(page, pageSize) {
     if (page <= visiblePagesBeforeOrAfterCurrentPage) {
         return 1
@@ -98,7 +94,7 @@ function formatBytes(bytes, decimals = 2) {
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PXZ8RMF');</script>
+    })(window,document,'script','dataLayer','GTM-PT945T8V');</script>
     <!-- End Google Tag Manager -->
     
     <meta name="google-site-verification" content="T3MVOAxSUsUTVJ3NhvZvMHw6YMaNQKM4Xq1VsSj0rLw" />
@@ -129,6 +125,10 @@ function formatBytes(bytes, decimals = 2) {
 </head>
 <body>
     <% if (env === 'live') { %>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PT945T8V"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
 
     <% } else { %> 
         <!-- Google Tag Manager (noscript) -->
@@ -495,16 +495,6 @@ function formatBytes(bytes, decimals = 2) {
 			</div>
 		</footer>
     </div>
-    <a class="accessibility" href="#wrapper">Back to top</a>
-
-    <% if (env === 'live') { %>
-    <!-- Cookie Consent Setup -->
-    <div data-cookie-banner-container class="sticky-cookie"></div>
-
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PXZ8RMF"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <% } %>  
+    <a class="accessibility" href="#wrapper">Back to top</a> 
 </body>
 </html>
